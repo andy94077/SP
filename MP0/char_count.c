@@ -12,14 +12,14 @@ int main(int argc, char const *argv[])
 		f = fopen(argv[2], "r");
 		if(f==NULL)
 		{
-			printf("error\n");
+			fprintf(stderr,"error\n");
 			exit(8);
 		}
 	}
 
 	unsigned long long table[128] = {0};
 	int c;
-	while((c=getc(f))!=EOF)
+	while((c=fgetc(f))!=EOF)
 	{
 		if(c=='\n')
 		{
