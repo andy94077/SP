@@ -17,7 +17,7 @@ int main(int argc, char const *argv[])
 		}
 	}
 
-	unsigned long long table[128] = {0};
+	unsigned long long table[256] = {0};
 	int c;
 	while((c=fgetc(f))!=EOF)
 	{
