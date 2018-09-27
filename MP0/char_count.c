@@ -4,7 +4,7 @@
 int main(int argc, char const *argv[])
 {
 	FILE *f;
-	const char *charset = argv[1];
+	const char *const charset = argv[1];
 	if(argc==2)
 		f=stdin;
 	else
@@ -13,29 +13,25 @@ int main(int argc, char const *argv[])
 		if(f==NULL)
 		{
 			fprintf(stderr,"error\n");
-			exit(8);
+			return 1;
 		}
 	}
 
-	unsigned long long table[256] = {0};
+	int table[256] = {0};
 	int c;
 	while((c=fgetc(f))!=EOF)
 	{
 		if(c=='\n')
 		{
-			unsigned long long sum = 0;
+			int sum = 0;
 			for (int i = 0; charset[i] != '\0';i++)
 				sum += table[charset[i]];
-			printf("%llu\n", sum);
+			printf("%d\n", sum);
 			memset(table, 0, sizeof(table));
 		}
 		else
 			table[c]++;
 	}
 	
-	unsigned long long sum = 0;
-	for (int i = 0; charset[i] != '\0';i++)
-		sum += table[charset[i]];
-	printf("%llu\n", sum);
 	return 0;
 }
