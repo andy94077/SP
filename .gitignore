@@ -11,6 +11,8 @@
 *.exe
 *.in
 .vscode/
+md5
+loser
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
