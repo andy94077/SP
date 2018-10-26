@@ -75,6 +75,7 @@ void status(const char dir[])
 		{
 			uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, los);
 			char filename[256];	fread(filename, sizeof(char), sizeof(filename), los);
+							
 		}
 	}
 }
