@@ -15,10 +15,10 @@ class FileMd5
 {
   public:
 	string name;
-	char md5[20];
+	char md5[MD5_LEN];
 	//FileMd5(int name_len) { name.resize(name_len); }
 	FileMd5(const char *__name) : name(__name) { set_md5(); }
-	FileMd5(const char *__name, const char *__md5) : name(__name) { strcpy(md5, __md5); }
+	FileMd5(const char *__name, const char *__md5) : name(__name) { memcpy(md5, __md5, MD5_LEN); }
 	
 	bool operator<(const FileMd5 &a) { return name < a.name; }
 	//static bool cmp_by_mp5(const FileMd5 *a, const FileMd5 *b) { return strcmp(a->md5, b->md5) < 0; }
@@ -50,10 +50,10 @@ inline void get_last_n_commit_pos(FILE *f, deque<uint32_t> &commit_log, int n = 
 	uint32_t commit_size;fread(&commit_size, sizeof(commit_size), 1, f);
 	while (commit_log.back() + commit_size < end_pos)
 	{
-		fseek(f, commit_size+PREFIX, SEEK_CUR);
-		if (commit_log.size() >= (size_t)n)
-			commit_log.pop_front();
+		fseek(f, commit_size, SEEK_CUR);
 		commit_log.push_back(ftell(f));
+		if (commit_log.size() > (size_t)n)
+			commit_log.pop_front();
 		fread(&commit_size, sizeof(commit_size), 1, f);
 	}
 }
@@ -92,16 +92,72 @@ inline void load_files(FILE *f, vector<FileMd5>& file)
 	}
 
 	//read filename and its md5 into vector
-	while(ftell(f)<commit_pos[0] + commit_size-PREFIX)
+	while(ftell(f)<=commit_pos[0] + commit_size-PREFIX)
 	{
 		uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
 		char filename[256];	fread(filename, sizeof(char), filename_len, f);
-		char md5[20]; fread(md5, sizeof(char), MD5_LEN, f);
+		char md5[MD5_LEN]; fread(md5, sizeof(char), MD5_LEN, f);
 		file.push_back(FileMd5{filename,md5});
 	}
 
 	//sort files by name
 	sort(file.begin(), file.end());
+}
+
+void compare_last(vector<FileMd5>& cur_file, vector<FileMd5>& last_file,
+				 vector<FileMd5 *>& new_file, vector<FileMd5 *>& modified, vector<pair<FileMd5 *, FileMd5 *>>& copied, vector<FileMd5 *>& deleted)
+{
+	vector<FileMd5 *> last_file_md5;//last_file_md5: sorted by md5, point to last_file
+	/*
+	*	init last_file_md5
+	*/
+	for (size_t i = 0; i < last_file.size(); i++)
+		last_file_md5.push_back(&last_file[i]);
+	last_file_md5.shrink_to_fit();
+	sort(last_file_md5.begin(), last_file_md5.end(),
+			[](const FileMd5 *a, const FileMd5 *b) -> bool { return memcmp(a->md5, b->md5, MD5_LEN) < 0; });
+
+	/*
+	*	compare files
+	*/
+	auto last_it = last_file.begin(), cur_it = cur_file.begin();
+	while (last_it!=last_file.end() && cur_it!=cur_file.end())
+	{
+		int result = last_it->name.compare(cur_it->name);
+		if (result==0)
+		{
+			if(memcmp(last_it->md5, cur_it->md5, MD5_LEN)!=0)
+				modified.push_back(&last_it[0]);
+			last_it++, cur_it++;
+		}
+		else if(result<0)
+			deleted.push_back(&last_it[0]), last_it++;
+		else
+		{
+			auto it = lower_bound(last_file_md5.begin(), last_file_md5.end(), cur_it->md5,
+									[](const FileMd5 *a, const char *key) -> bool { return memcmp(a->md5, key, MD5_LEN) < 0; });
+			if (it == last_file_md5.end())
+				new_file.push_back(&cur_it[0]);
+			else
+				copied.push_back(make_pair(*it, &cur_it[0]));
+			cur_it++;
+		}
+	}
+
+	//finish the remain part of last_file
+	for (; last_it != last_file.end();last_it++)
+		deleted.push_back(&last_it[0]);
+
+	//finish the remain part of cur_file
+	for (; cur_it != cur_file.end();cur_it++)
+	{
+		auto it = lower_bound(last_file_md5.begin(), last_file_md5.end(), cur_it->md5,
+								[](const FileMd5 *a, const char *key) -> bool { return memcmp(a->md5, key, MD5_LEN) < 0; });
+		if (it == last_file_md5.end())
+			new_file.push_back(&cur_it[0]);
+		else
+			copied.push_back(make_pair(*it, &cur_it[0]));
+	}
 }
 void status(const char dir[])
 {
@@ -119,59 +175,23 @@ void status(const char dir[])
 	else
 	{
 		vector<FileMd5> last_file; load_files(los, last_file);
-		vector<FileMd5 *> new_file, modified, deleted, last_file_md5;//last_file_md5: sorted by md5, point to last_file
+		vector<FileMd5 *> new_file, modified, deleted;
 		vector<pair<FileMd5 *, FileMd5 *>> copied;
 
-		/*
-		*	init last_file_md5
-		*/
-		for (size_t i = 0; i < last_file.size(); i++)
-			last_file_md5.push_back(&last_file[i]);
-		last_file_md5.shrink_to_fit();
-		sort(last_file_md5.begin(), last_file_md5.end(),
-			 [](const FileMd5 *a, const FileMd5 *b) -> bool { return strcmp(a->md5, b->md5) < 0; });
+		compare_last(cur_file, last_file, new_file, modified, copied, deleted);
 
-		/*
-		*	compare files
-		*/
-		auto last_it = last_file.begin(), cur_it = cur_file.begin();
-		while (last_it!=last_file.end() && cur_it!=cur_file.end())
-		{
-			int result = last_it->name.compare(cur_it->name);
-			if (result==0)
-			{
-				if(last_it->md5!=cur_it->md5)
-					modified.push_back(&last_it[0]);
-				last_it++, cur_it++;
-			}
-			else if(result<0)
-				deleted.push_back(&last_it[0]), last_it++;
-			else
-			{
-				auto it = lower_bound(last_file_md5.begin(), last_file_md5.end(), cur_it->md5,
-									  [](const FileMd5 *a, const char *key) -> bool { return strcmp(a->md5, key) < 0; });
-				if (it == last_file_md5.end())
-					new_file.push_back(&cur_it[0]);
-				else
-					copied.push_back(make_pair(*it, &cur_it[0]));
-				cur_it++;
-			}
-		}
-
-		//finish the remain part of last_file
-		for (; last_it != last_file.end();last_it++)
-			deleted.push_back(&last_it[0]);
-
-		//finish the remain part of cur_file
-		for (; cur_it != cur_file.end();cur_it++)
-		{
-			auto it = lower_bound(last_file_md5.begin(), last_file_md5.end(), cur_it->md5,
-									[](const FileMd5 *a, const char *key) -> bool { return strcmp(a->md5, key) < 0; });
-			if (it == last_file_md5.end())
-				new_file.push_back(&cur_it[0]);
-			else
-				copied.push_back(make_pair(*it, &cur_it[0]));
-		}
+		puts("[new_file]");
+		for (auto it: new_file)
+			puts(it->name.data());
+		puts("[modified]");
+		for (auto it : modified)
+			puts(it->name.data());
+		puts("[copied]");
+		for (auto it : copied)
+			printf("%s => %s\n",it.first->name.data(), it.second->name.data());
+		puts("[deleted]");
+		for (auto it : deleted)
+			puts(it->name.data());
 	}
 }
 void commit(const char dir[])
