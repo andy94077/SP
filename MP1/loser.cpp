@@ -28,7 +28,7 @@ class FileMd5
 	void set_md5()
 	{
 		strcpy(md5,"hello");
-		strncat(md5, name.data(),MD5_LEN);
+		strncat(md5, name.data(),6);
 	}
 };
 
@@ -163,7 +163,7 @@ void status(const char dir[])
 {
 	vector<FileMd5> cur_file; load_files(dir,cur_file);
 
-	FILE *los = fopen(".loser_record", "rb");
+	FILE *los = fopen(((string)dir+"/.loser_record").data(), "rb");
 	//.loser_record does not exist, treat all files as new files
 	if (los == NULL)
 	{
@@ -193,6 +193,7 @@ void status(const char dir[])
 		for (auto it : deleted)
 			puts(it->name.data());
 	}
+	fclose(los);
 }
 void commit(const char dir[])
 {
@@ -204,11 +205,11 @@ void log(int n, const char dir[])
 }
 int main(int argc, char const *argv[])
 {
-	/*if(strcmp(argv[1],"status")==0)
+	if(strcmp(argv[1],"status")==0)
 		status(argv[2]);
 	else if(strcmp(argv[1],"commit")==0)
 		commit(argv[2]);
 	else
-		log(atoi(argv[2]), argv[3]);*/
+		log(atoi(argv[2]), argv[3]);
 	return 0;
 }
