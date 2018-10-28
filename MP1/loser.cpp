@@ -7,9 +7,10 @@
 #include <vector>
 #include <algorithm>
 #include <utility>
+#include <cassert>
 #include <dirent.h>
 using namespace std;
-constexpr int PREFIX = 24, MD5_LEN=16;
+constexpr int PREFIX = 8, MD5_LEN=16;
 
 class FileMd5
 {
@@ -21,8 +22,11 @@ class FileMd5
 	FileMd5(const char *__name, const char *__md5) : name(__name) { memcpy(md5, __md5, MD5_LEN); }
 	
 	bool operator<(const FileMd5 &a) { return name < a.name; }
-	//static bool cmp_by_mp5(const FileMd5 *a, const FileMd5 *b) { return strcmp(a->md5, b->md5) < 0; }
-	//static bool bsearch_md5(const FileMd5 &a, const char *key) { return strcmp(a.md5, key) < 0; }
+	void print_md5()const
+	{
+		for (int i = 0; i < MD5_LEN;i++)
+			printf("%hhx", md5[i]);
+	}
 
   private:
 	void set_md5()
@@ -41,30 +45,36 @@ inline void seek_and_read(FILE *f, int offset, int whence, T& buf)
 
 inline void get_last_n_commit_pos(FILE *f, deque<uint32_t> &commit_log, int n = 1)
 {
+	commit_log.clear();
 	fseek(f, 0, SEEK_END);
 	uint32_t end_pos = ftell(f);
 
+	//push_back the pos where number of add stores
 	fseek(f, PREFIX, SEEK_SET);
 	commit_log.push_back(ftell(f));
 
-	uint32_t commit_size;fread(&commit_size, sizeof(commit_size), 1, f);
+	uint32_t commit_size;seek_and_read(f, 24, SEEK_SET, commit_size);
 	while (commit_log.back() + commit_size < end_pos)
 	{
-		fseek(f, commit_size, SEEK_CUR);
-		commit_log.push_back(ftell(f));
+		//printf("## cl.b: %x cs: %x ep:%x\n", commit_log.back(), commit_size, end_pos);
+		fseek(f, commit_size-sizeof(uint32_t), SEEK_CUR);
+		commit_log.push_back(ftell(f)-16);
 		if (commit_log.size() > (size_t)n)
 			commit_log.pop_front();
 		fread(&commit_size, sizeof(commit_size), 1, f);
+		//printf("## cl.b: %x cs: %x ep:%x\n", commit_log.back(), commit_size, end_pos);
 	}
 }
 
 inline void load_files(const char dir[], vector<FileMd5>& file)
 {
 	DIR *d = opendir(dir);
+	assert(d != NULL);
 	dirent *f;
 	//read files in dir
 	while((f=readdir(d))!=NULL)
-		file.push_back((FileMd5){f->d_name});
+		if(strcmp(f->d_name,".")!=0 && strcmp(f->d_name,"..")!=0 && strcmp(f->d_name,".loser_record")!=0)
+			file.push_back((FileMd5){f->d_name});
 	closedir(d);
 	//sort files by name
 	sort(file.begin(), file.end());
@@ -78,21 +88,46 @@ inline void load_files(FILE *f, vector<FileMd5>& file)
 	/*
 	*	jump to md5 part
 	*/
-	//amcd_n: add, modify, copy, delete
-	//commit_size: contain the amcd part, md5 part, and 24(PREFIX) byte of the next commit
-	uint32_t amcd_n, commit_size;
-	seek_and_read(f, commit_pos[0] - 20, SEEK_SET, amcd_n);
-	seek_and_read(f, commit_pos[0], SEEK_SET, commit_size);
-	//jumping
-	for (uint32_t i = 0; i < amcd_n; i++)
+	uint32_t file_n, add_n, modified_n, copied_n, deleted_n, commit_size;
+	fseek(f, commit_pos[0]-4, SEEK_SET);
+	fread(&file_n, sizeof(file_n), 1, f);
+	fread(&add_n, sizeof(add_n), 1, f);
+	fread(&modified_n, sizeof(modified_n), 1, f);
+	fread(&copied_n, sizeof(copied_n), 1, f);
+	fread(&deleted_n, sizeof(deleted_n), 1, f);
+	fread(&commit_size, sizeof(commit_size), 1, f);
+	//printf("## add_n: %x mo: %x co: %x de: %x cs: %x fp: %x\n", add_n, modified_n, copied_n, deleted_n, commit_size, ftell(f));
+	/*
+	*	jumping
+	*/
+	for (uint32_t i = 0; i < add_n + modified_n; i++)
 	{
 		uint8_t filename_len;
 		fread(&filename_len, sizeof(filename_len), 1, f);
+		//printf("## fl: %hhx\n", filename_len);
 		fseek(f, filename_len, SEEK_CUR);
 	}
+	for (uint32_t i = 0; i < copied_n; i++)
+	{
+		uint8_t filename_len;
+		fread(&filename_len, sizeof(filename_len), 1, f);
+		//printf("## fl: %hhx\n", filename_len);
+		fseek(f, filename_len, SEEK_CUR);
 
+		fread(&filename_len, sizeof(filename_len), 1, f);
+		//printf("## fl: %hhx\n", filename_len);
+		fseek(f, filename_len, SEEK_CUR);
+	}
+	for (uint32_t i = 0; i < deleted_n; i++)
+	{
+		uint8_t filename_len;
+		fread(&filename_len, sizeof(filename_len), 1, f);
+		//printf("## fl: %hhx\n", filename_len);
+		fseek(f, filename_len, SEEK_CUR);
+	}
+	
 	//read filename and its md5 into vector
-	while(ftell(f)<=commit_pos[0] + commit_size-PREFIX)
+	for (uint32_t i = 0; i < file_n; i++)
 	{
 		uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
 		char filename[256];	fread(filename, sizeof(char), filename_len, f);
@@ -163,7 +198,7 @@ void status(const char dir[])
 {
 	vector<FileMd5> cur_file; load_files(dir,cur_file);
 
-	FILE *los = fopen(((string)dir+"/.loser_record").data(), "rb");
+	FILE *los = fopen(((string)dir+".loser_record").data(), "rb");
 	//.loser_record does not exist, treat all files as new files
 	if (los == NULL)
 	{
@@ -179,7 +214,7 @@ void status(const char dir[])
 		vector<pair<FileMd5 *, FileMd5 *>> copied;
 
 		compare_last(cur_file, last_file, new_file, modified, copied, deleted);
-
+		printf("## n: %zu m: %zu c: %zu d: %zu\n", new_file.size(), modified.size(), copied.size(), deleted.size());
 		puts("[new_file]");
 		for (auto it: new_file)
 			puts(it->name.data());
@@ -205,11 +240,13 @@ void log(int n, const char dir[])
 }
 int main(int argc, char const *argv[])
 {
-	if(strcmp(argv[1],"status")==0)
+	/*if(strcmp(argv[1],"status")==0)
 		status(argv[2]);
 	else if(strcmp(argv[1],"commit")==0)
 		commit(argv[2]);
 	else
-		log(atoi(argv[2]), argv[3]);
+		log(atoi(argv[2]), argv[3]);*/
+	status("test_1/");
+
 	return 0;
 }
