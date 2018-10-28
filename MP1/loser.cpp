@@ -191,7 +191,7 @@ void status(const char dir[])
 		vector<pair<FileMd5 *, FileMd5 *>> copied;
 
 		compare_last(cur_file, last_file, new_file, modified, copied, deleted);
-		printf("## n: %zu m: %zu c: %zu d: %zu\n", new_file.size(), modified.size(), copied.size(), deleted.size());
+		//printf("## n: %zu m: %zu c: %zu d: %zu\n", new_file.size(), modified.size(), copied.size(), deleted.size());
 		puts("[new_file]");
 		for (auto it: new_file)
 			puts(it->name.data());
