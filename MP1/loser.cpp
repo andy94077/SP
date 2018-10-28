@@ -9,32 +9,9 @@
 #include <utility>
 #include <cassert>
 #include <dirent.h>
+#include "FileMd5.h"
 using namespace std;
-constexpr int PREFIX = 8, MD5_LEN=16;
-
-class FileMd5
-{
-  public:
-	string name;
-	char md5[MD5_LEN];
-	//FileMd5(int name_len) { name.resize(name_len); }
-	FileMd5(const char *__name) : name(__name) { set_md5(); }
-	FileMd5(const char *__name, const char *__md5) : name(__name) { memcpy(md5, __md5, MD5_LEN); }
-	
-	bool operator<(const FileMd5 &a) { return name < a.name; }
-	void print_md5()const
-	{
-		for (int i = 0; i < MD5_LEN;i++)
-			printf("%hhx", md5[i]);
-	}
-
-  private:
-	void set_md5()
-	{
-		strcpy(md5,"hello");
-		strncat(md5, name.data(),6);
-	}
-};
+constexpr int PREFIX = 8;
 
 template <class T>
 inline void seek_and_read(FILE *f, int offset, int whence, T& buf)
@@ -74,7 +51,7 @@ inline void load_files(const char dir[], vector<FileMd5>& file)
 	//read files in dir
 	while((f=readdir(d))!=NULL)
 		if(strcmp(f->d_name,".")!=0 && strcmp(f->d_name,"..")!=0 && strcmp(f->d_name,".loser_record")!=0)
-			file.push_back((FileMd5){f->d_name});
+			file.push_back(FileMd5{(string)dir+f->d_name});
 	closedir(d);
 	//sort files by name
 	sort(file.begin(), file.end());
@@ -131,7 +108,7 @@ inline void load_files(FILE *f, vector<FileMd5>& file)
 	{
 		uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
 		char filename[256];	fread(filename, sizeof(char), filename_len, f);
-		char md5[MD5_LEN]; fread(md5, sizeof(char), MD5_LEN, f);
+		char md5[MD5_DIGEST_LENGTH]; fread(md5, sizeof(char), MD5_DIGEST_LENGTH, f);
 		file.push_back(FileMd5{filename,md5});
 	}
 
@@ -150,7 +127,7 @@ void compare_last(vector<FileMd5>& cur_file, vector<FileMd5>& last_file,
 		last_file_md5.push_back(&last_file[i]);
 	last_file_md5.shrink_to_fit();
 	sort(last_file_md5.begin(), last_file_md5.end(),
-			[](const FileMd5 *a, const FileMd5 *b) -> bool { return memcmp(a->md5, b->md5, MD5_LEN) < 0; });
+			[](const FileMd5 *a, const FileMd5 *b) -> bool { return memcmp(a->md5, b->md5, MD5_DIGEST_LENGTH) < 0; });
 
 	/*
 	*	compare files
@@ -161,7 +138,7 @@ void compare_last(vector<FileMd5>& cur_file, vector<FileMd5>& last_file,
 		int result = last_it->name.compare(cur_it->name);
 		if (result==0)
 		{
-			if(memcmp(last_it->md5, cur_it->md5, MD5_LEN)!=0)
+			if(memcmp(last_it->md5, cur_it->md5, MD5_DIGEST_LENGTH)!=0)
 				modified.push_back(&last_it[0]);
 			last_it++, cur_it++;
 		}
@@ -170,7 +147,7 @@ void compare_last(vector<FileMd5>& cur_file, vector<FileMd5>& last_file,
 		else
 		{
 			auto it = lower_bound(last_file_md5.begin(), last_file_md5.end(), cur_it->md5,
-									[](const FileMd5 *a, const char *key) -> bool { return memcmp(a->md5, key, MD5_LEN) < 0; });
+									[](const FileMd5 *a, const unsigned char *key) -> bool { return memcmp(a->md5, key, MD5_DIGEST_LENGTH) < 0; });
 			if (it == last_file_md5.end())
 				new_file.push_back(&cur_it[0]);
 			else
@@ -187,7 +164,7 @@ void compare_last(vector<FileMd5>& cur_file, vector<FileMd5>& last_file,
 	for (; cur_it != cur_file.end();cur_it++)
 	{
 		auto it = lower_bound(last_file_md5.begin(), last_file_md5.end(), cur_it->md5,
-								[](const FileMd5 *a, const char *key) -> bool { return memcmp(a->md5, key, MD5_LEN) < 0; });
+								[](const FileMd5 *a, const unsigned char *key) -> bool { return memcmp(a->md5, key, MD5_DIGEST_LENGTH) < 0; });
 		if (it == last_file_md5.end())
 			new_file.push_back(&cur_it[0]);
 		else
@@ -247,6 +224,12 @@ int main(int argc, char const *argv[])
 	else
 		log(atoi(argv[2]), argv[3]);*/
 	status("test_1/");
+	
+	/*vector<FileMd5> f;load_files("test_1/",f);
+	printf("%zu\n",f.size());
+	for(auto &item: f)
+		printf("%s ",item.name.data()), item.print_md5(),puts("");*/
+
 
 	return 0;
 }

@@ -13,6 +13,7 @@
 .vscode/
 md5
 loser
+.ycm_extra_conf.py
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
