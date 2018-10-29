@@ -13,11 +13,29 @@
 using namespace std;
 constexpr int PREFIX = 4;
 
-template <class T>
+template <typename T>
 inline void seek_and_read(FILE *f, int offset, int whence, T& buf)
 {
 	fseek(f, offset, whence);
 	fread(&buf, sizeof(buf), 1, f);
+}
+
+template <typename T>
+inline void read_int(FILE *f, T& num)
+{
+	fread(&num, sizeof(num), 1, f);
+}
+template <typename T, typename... Args>
+inline void read_int(FILE *f, T& first, Args&... args)
+{
+	fread(&first, sizeof(first), 1, f);
+	read_int(f, args...);
+}
+
+inline void read_str(FILE *f,char *str,size_t n)
+{
+	fread(str, sizeof(char), n, f);
+	str[n] = '\0';
 }
 
 //save the file_n pos
@@ -35,14 +53,14 @@ inline uint32_t get_last_n_file_n_pos(FILE *f, deque<uint32_t> &commit_log, size
 	uint32_t commit_size;seek_and_read(f, 24, SEEK_SET, commit_size);
 	for (; commit_log.front() + commit_size < end_pos; commit_count++)
 	{
-		printf("## cl.f: %x cs: %x ep:%x\n", commit_log.front(), commit_size, end_pos);
+		//printf("## cl.f: %x cs: %x ep:%x\n", commit_log.front(), commit_size, end_pos);
 		fseek(f, commit_size-sizeof(uint32_t), SEEK_CUR);
 		commit_log.push_front(ftell(f)-(24-PREFIX));
 		fread(&commit_size, sizeof(commit_size), 1, f);
-		printf("## cl.f: %x cs: %x ep:%x\n", commit_log.front(), commit_size, end_pos);
+		//printf("## cl.f: %x cs: %x ep:%x\n", commit_log.front(), commit_size, end_pos);
 	}
-	//only remain last n
-	commit_log.erase(commit_log.begin() + n, commit_log.end());
+	//only remain last min(commit_count, n)
+	commit_log.erase(commit_log.begin() + min((size_t)commit_count, n), commit_log.end());
 	return commit_count;
 }
 
@@ -76,7 +94,7 @@ inline uint32_t load_files(FILE *f, vector<FileMd5>& file)
 	fread(&copied_n, sizeof(copied_n), 1, f);
 	fread(&deleted_n, sizeof(deleted_n), 1, f);
 	fread(&commit_size, sizeof(commit_size), 1, f);
-	//printf("## add_n: %x mo: %x co: %x de: %x cs: %x fp: %x\n", add_n, modified_n, copied_n, deleted_n, commit_size, ftell(f));
+	printf("## add_n: %x mo: %x co: %x de: %x cs: %x fp: %x\n", add_n, modified_n, copied_n, deleted_n, commit_size, ftell(f));
 	/*
 	*	jumping
 	*/
@@ -317,64 +335,63 @@ void log(int n, const char dir[])
 	deque<uint32_t> commit_log;
 	uint32_t commit_n = get_last_n_file_n_pos(f, commit_log,n);
 
-	for (auto pos:commit_log)
+	for (auto it = commit_log.cbegin(); it != commit_log.cend();it++)
 	{
-		fseek(f, pos, SEEK_SET);
+		//printf("## pos: %x\n", *it);
+		fseek(f, *it, SEEK_SET);
+
 		uint32_t file_n, add_n, modified_n, copied_n, deleted_n;
-		fread(&file_n, sizeof(add_n), 1, f);
-		fread(&add_n, sizeof(add_n), 1, f);
-		fread(&modified_n, sizeof(add_n), 1, f);
-		fread(&copied_n, sizeof(add_n), 1, f);
-		fread(&deleted_n, sizeof(add_n), 1, f);
+		read_int(f, file_n, add_n, modified_n, copied_n, deleted_n);
+		
 		fseek(f, sizeof(uint32_t), SEEK_CUR); //skip commit size
 
 		printf("# commit %u\n", commit_n--);
 		puts("[new_file]");
 		while(add_n--)
 		{
-			uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
-			char filename[256];	fread(filename, sizeof(char), filename_len, f);
+			uint8_t filename_len; read_int(f, filename_len);
+			char filename[256]; read_str(f, filename, filename_len);
 			puts(filename);
 		}
 		puts("[modified]");
 		while(modified_n--)
 		{
-			uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
-			char filename[256];	fread(filename, sizeof(char), filename_len, f);
+			uint8_t filename_len; read_int(f, filename_len);
+			char filename[256]; read_str(f, filename, filename_len);
 			puts(filename);
 		}
 		puts("[copied]");
 		while(copied_n--)
 		{
-			uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
-			char a[256]; fread(a, sizeof(char), filename_len, f);
+			uint8_t filename_len; read_int(f, filename_len);
+			char a[256]; read_str(f, a, filename_len);
 			
-			fread(&filename_len, sizeof(filename_len), 1, f);
-			char b[256]; fread(b, sizeof(char), filename_len, f);
+			read_int(f, filename_len);
+			char b[256]; read_str(f, b, filename_len);
 
 			printf("%s => %s\n", a, b);
 		}
 		puts("[deleted]");
 		while(deleted_n--)
 		{
-			uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
-			char filename[256];	fread(filename, sizeof(char), filename_len, f);
+			uint8_t filename_len; read_int(f, filename_len);
+			char filename[256];	read_str(f, filename, filename_len);
 			puts(filename);
 		}
 
 		puts("(MD5)");
 		while(file_n--)
 		{
-			uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
-			char filename[256];	fread(filename, sizeof(char), filename_len, f);
-			char md5[MD5_DIGEST_LENGTH]; fread(md5, sizeof(char), MD5_DIGEST_LENGTH, f);
+			uint8_t filename_len; read_int(f, filename_len);
+			char filename[256];	read_str(f, filename, filename_len);
+			unsigned char md5[MD5_DIGEST_LENGTH]; fread(md5, sizeof(char), MD5_DIGEST_LENGTH, f);
 
 			printf("%s ", filename);
 			print_md5(md5);
 			printf("\n");
 		}
 
-		printf("\n");
+		if(it+1 != commit_log.cend())	printf("\n");
 	}
 }
 int main(int argc, char const *argv[])
@@ -386,15 +403,37 @@ int main(int argc, char const *argv[])
 	else
 		log(atoi(argv[2]), argv[3]);*/
 	//status("test_1/");
+	log(3, "test_1/");
+	
+	/*//read_int, read_str
+	FILE *f = fopen("test_1/.loser_record", "rb");
+	fseek(f, 0x34, SEEK_SET);
+	uint32_t fn, a, m, c, d, cz;
+	uint8_t f1;
+	read_int(f, fn, a, m, c, d, cz,f1);
+	char name[256];
+	read_str(f, name, f1);
+	printf("%x %x %x %x %x %x %hhu %s\n", fn, a, m, c, d, cz, f1, name);*/
+
+	/*//get_last_n_file_n_pos
 	FILE *f = fopen("test_1/.loser_record", "rb");
 	deque<uint32_t> c;
 	get_last_n_file_n_pos(f, c);
+	fclose(f);*/
 
-	/*vector<FileMd5> f;load_files("test_1/",f);
+	/*//load_files(char*, vector<FileMd5>)
+	vector<FileMd5> f;load_files("test_1/",f);
 	printf("%zu\n",f.size());
 	for(auto &item: f)
 		printf("%s ",item.name.data()), print_md5(item.md5),puts("");*/
 
+	/*//load_files(FILE *, vector<FileMd5>)
+	FILE *f = fopen("test_1/.loser_record", "rb");
+	vector<FileMd5> file;load_files(f, file);
+	printf("%zu\n",file.size());
+	for(auto &item: file)
+		printf("%s ",item.name.data()), print_md5(item.md5),puts("");
+	fclose(f);*/
 
 	return 0;
 }
