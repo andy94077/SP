@@ -1,5 +1,5 @@
 CC=g++
-CXXFLAGS= -Wall -std=c++14 -lcrypto
+CXXFLAGS= -Wextra -Wall -std=c++14 -lcrypto
 #You MUST use c++14 or c++11, c++17 will failed when you use -O2
 
 all: loser
