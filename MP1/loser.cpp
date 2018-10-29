@@ -313,7 +313,7 @@ void commit(const char dir[])
 		//md5 part
 		for(auto &item: cur_file)
 		{
-			tmp=item.name.length(); fwrite(&tmp,sizeof(tmp),1,f);
+			uint8_t len = item.name.length(); fwrite(&len,sizeof(len),1,f); 
 			fwrite(item.name.data(),sizeof(char),item.name.length(),f);
 			fwrite(item.md5,sizeof(char),MD5_DIGEST_LENGTH,f);
 		}
@@ -403,8 +403,6 @@ int main(int argc, char const *argv[])
 		commit(argv[2]);
 	else
 		log(atoi(argv[2]), argv[3]);
-	//status("test_1/");
-	//log(3, "test_1/");
 	
 	/*//read_int, read_str
 	FILE *f = fopen("test_1/.loser_record", "rb");
