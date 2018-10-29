@@ -56,7 +56,7 @@ inline uint32_t get_last_n_file_n_pos(FILE *f, deque<uint32_t> &commit_log, size
 		//printf("## cl.f: %x cs: %x ep:%x\n", commit_log.front(), commit_size, end_pos);
 		fseek(f, commit_size-sizeof(uint32_t), SEEK_CUR);
 		commit_log.push_front(ftell(f)-(24-PREFIX));
-		fread(&commit_size, sizeof(commit_size), 1, f);
+		read_int(f, commit_size);
 		//printf("## cl.f: %x cs: %x ep:%x\n", commit_log.front(), commit_size, end_pos);
 	}
 	//only remain last min(commit_count, n)
@@ -88,35 +88,30 @@ inline uint32_t load_files(FILE *f, vector<FileMd5>& file)
 	*/
 	fseek(f, commit_pos[0], SEEK_SET);
 	uint32_t file_n, add_n, modified_n, copied_n, deleted_n, commit_size;
-	fread(&file_n, sizeof(file_n), 1, f);
-	fread(&add_n, sizeof(add_n), 1, f);
-	fread(&modified_n, sizeof(modified_n), 1, f);
-	fread(&copied_n, sizeof(copied_n), 1, f);
-	fread(&deleted_n, sizeof(deleted_n), 1, f);
-	fread(&commit_size, sizeof(commit_size), 1, f);
-	printf("## add_n: %x mo: %x co: %x de: %x cs: %x fp: %x\n", add_n, modified_n, copied_n, deleted_n, commit_size, ftell(f));
+	read_int(f, file_n, add_n, modified_n, copied_n, deleted_n, commit_size);
+	//printf("## add_n: %x mo: %x co: %x de: %x cs: %x fp: %x\n", add_n, modified_n, copied_n, deleted_n, commit_size, ftell(f));
 	/*
 	*	jumping
 	*/
 	for (uint32_t i = 0; i < add_n + modified_n; i++)
 	{
-		uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
+		uint8_t filename_len; read_int(f, filename_len);
 		//printf("## fl: %hhx\n", filename_len);
 		fseek(f, filename_len, SEEK_CUR);
 	}
 	for (uint32_t i = 0; i < copied_n; i++)
 	{
-		uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
+		uint8_t filename_len; read_int(f, filename_len);
 		//printf("## fl: %hhx\n", filename_len);
 		fseek(f, filename_len, SEEK_CUR);
 
-		fread(&filename_len, sizeof(filename_len), 1, f);
+		read_int(f, filename_len);
 		//printf("## fl: %hhx\n", filename_len);
 		fseek(f, filename_len, SEEK_CUR);
 	}
 	for (uint32_t i = 0; i < deleted_n; i++)
 	{
-		uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
+		uint8_t filename_len; read_int(f, filename_len);
 		//printf("## fl: %hhx\n", filename_len);
 		fseek(f, filename_len, SEEK_CUR);
 	}
@@ -124,8 +119,8 @@ inline uint32_t load_files(FILE *f, vector<FileMd5>& file)
 	//read filename and its md5 into vector
 	for (uint32_t i = 0; i < file_n; i++)
 	{
-		uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
-		char filename[256];	fread(filename, sizeof(char), filename_len, f);
+		uint8_t filename_len; read_int(f, filename_len);
+		char filename[256];	read_str(f, filename, filename_len);
 		char md5[MD5_DIGEST_LENGTH]; fread(md5, sizeof(char), MD5_DIGEST_LENGTH, f);
 		file.push_back(FileMd5{filename,md5});
 	}
@@ -199,7 +194,7 @@ void status(const char dir[])
 	//.loser_record does not exist, treat all files as new files
 	if (los == NULL)
 	{
-		printf("## loser_record does not exist.\n");
+		//printf("## loser_record does not exist.\n");
 		printf("[new_file]\n");
 		for (auto &item : cur_file)
 			printf("%s\n", item.name.data());
@@ -213,7 +208,7 @@ void status(const char dir[])
 
 		compare_last(cur_file, last_file, new_file, modified, copied, deleted);
 		
-		printf("## n: %zu m: %zu c: %zu d: %zu\n", new_file.size(), modified.size(), copied.size(), deleted.size());
+		//printf("## n: %zu m: %zu c: %zu d: %zu\n", new_file.size(), modified.size(), copied.size(), deleted.size());
 
 		puts("[new_file]");
 		for (auto &it: new_file)
@@ -396,14 +391,20 @@ void log(int n, const char dir[])
 }
 int main(int argc, char const *argv[])
 {
-	/*if(strcmp(argv[1],"status")==0)
+	if(argc<2)
+	{
+		printf("error: arguments should > 2. aborting...\n");
+		return -1;
+	}
+
+	if (strcmp(argv[1], "status") == 0)
 		status(argv[2]);
 	else if(strcmp(argv[1],"commit")==0)
 		commit(argv[2]);
 	else
-		log(atoi(argv[2]), argv[3]);*/
+		log(atoi(argv[2]), argv[3]);
 	//status("test_1/");
-	log(3, "test_1/");
+	//log(3, "test_1/");
 	
 	/*//read_int, read_str
 	FILE *f = fopen("test_1/.loser_record", "rb");
