@@ -25,7 +25,7 @@ class FileMd5
 	void set_md5()
 	{
 		memset(buf,0,sizeof(buf));
-		FILE *f=fopen(name.data(), "r");
+		FILE *f=fopen(name.data(), "rb");
 		assert(f!=NULL);
 
 		MD5_CTX context;
