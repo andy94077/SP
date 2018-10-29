@@ -6,6 +6,12 @@
 #include <dirent.h>
 using namespace std;
 static char buf[1<<20]={0};
+void print_md5(char md5[16])
+{
+	for (int i = 0; i < MD5_DIGEST_LENGTH;i++)
+		printf("%hhx", md5[i]);
+}
+
 class FileMd5
 {
   public:
@@ -15,12 +21,6 @@ class FileMd5
 	FileMd5(const char *__name, const char *__md5) : name(__name) { memcpy(md5, __md5, MD5_DIGEST_LENGTH); }
 	
 	bool operator<(const FileMd5 &a) { return name < a.name; }
-	void print_md5()const
-	{
-		for (int i = 0; i < MD5_DIGEST_LENGTH;i++)
-			printf("%hhx", md5[i]);
-	}
-
   private:
 	void set_md5()
 	{

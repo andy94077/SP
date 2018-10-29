@@ -11,7 +11,7 @@
 #include <dirent.h>
 #include "FileMd5.h"
 using namespace std;
-constexpr int PREFIX = 8;
+constexpr int PREFIX = 4;
 
 template <class T>
 inline void seek_and_read(FILE *f, int offset, int whence, T& buf)
@@ -20,7 +20,8 @@ inline void seek_and_read(FILE *f, int offset, int whence, T& buf)
 	fread(&buf, sizeof(buf), 1, f);
 }
 
-inline uint32_t get_last_n_commit_pos(FILE *f, deque<uint32_t> &commit_log, int n = 1)
+//save the file_n pos
+inline uint32_t get_last_n_file_n_pos(FILE *f, deque<uint32_t> &commit_log, size_t n = 1)
 {
 	commit_log.clear();
 	fseek(f, 0, SEEK_END);
@@ -28,20 +29,20 @@ inline uint32_t get_last_n_commit_pos(FILE *f, deque<uint32_t> &commit_log, int 
 
 	//push_back the pos where number of add stores
 	fseek(f, PREFIX, SEEK_SET);
-	commit_log.push_back(ftell(f));
+	commit_log.push_front(ftell(f));
 
 	uint32_t commit_count=1;
 	uint32_t commit_size;seek_and_read(f, 24, SEEK_SET, commit_size);
-	for (; commit_log.back() + commit_size < end_pos; commit_count++)
+	for (; commit_log.front() + commit_size < end_pos; commit_count++)
 	{
-		//printf("## cl.b: %x cs: %x ep:%x\n", commit_log.back(), commit_size, end_pos);
+		printf("## cl.f: %x cs: %x ep:%x\n", commit_log.front(), commit_size, end_pos);
 		fseek(f, commit_size-sizeof(uint32_t), SEEK_CUR);
-		commit_log.push_back(ftell(f)-16);
-		if (commit_log.size() > (size_t)n)
-			commit_log.pop_front();
+		commit_log.push_front(ftell(f)-(24-PREFIX));
 		fread(&commit_size, sizeof(commit_size), 1, f);
-		//printf("## cl.b: %x cs: %x ep:%x\n", commit_log.back(), commit_size, end_pos);
+		printf("## cl.f: %x cs: %x ep:%x\n", commit_log.front(), commit_size, end_pos);
 	}
+	//only remain last n
+	commit_log.erase(commit_log.begin() + n, commit_log.end());
 	return commit_count;
 }
 
@@ -62,13 +63,13 @@ inline void load_files(const char dir[], vector<FileMd5>& file)
 inline uint32_t load_files(FILE *f, vector<FileMd5>& file)
 {
 	deque<uint32_t> commit_pos;
-	uint32_t commit_n=get_last_n_commit_pos(f, commit_pos);
+	uint32_t commit_n=get_last_n_file_n_pos(f, commit_pos);
 	
 	/*
 	*	jump to md5 part
 	*/
+	fseek(f, commit_pos[0], SEEK_SET);
 	uint32_t file_n, add_n, modified_n, copied_n, deleted_n, commit_size;
-	fseek(f, commit_pos[0]-4, SEEK_SET);
 	fread(&file_n, sizeof(file_n), 1, f);
 	fread(&add_n, sizeof(add_n), 1, f);
 	fread(&modified_n, sizeof(modified_n), 1, f);
@@ -81,15 +82,13 @@ inline uint32_t load_files(FILE *f, vector<FileMd5>& file)
 	*/
 	for (uint32_t i = 0; i < add_n + modified_n; i++)
 	{
-		uint8_t filename_len;
-		fread(&filename_len, sizeof(filename_len), 1, f);
+		uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
 		//printf("## fl: %hhx\n", filename_len);
 		fseek(f, filename_len, SEEK_CUR);
 	}
 	for (uint32_t i = 0; i < copied_n; i++)
 	{
-		uint8_t filename_len;
-		fread(&filename_len, sizeof(filename_len), 1, f);
+		uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
 		//printf("## fl: %hhx\n", filename_len);
 		fseek(f, filename_len, SEEK_CUR);
 
@@ -99,8 +98,7 @@ inline uint32_t load_files(FILE *f, vector<FileMd5>& file)
 	}
 	for (uint32_t i = 0; i < deleted_n; i++)
 	{
-		uint8_t filename_len;
-		fread(&filename_len, sizeof(filename_len), 1, f);
+		uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
 		//printf("## fl: %hhx\n", filename_len);
 		fseek(f, filename_len, SEEK_CUR);
 	}
@@ -222,27 +220,30 @@ void commit(const char dir[])
 	if(f==NULL)
 	{
 		f=fopen(((string)dir+".loser_record").data(),"wb");
-		uint32_t tmp=1;	fwrite(&tmp,sizeof(tmp),1,f); //commit_n
+
+		uint32_t tmp=1;		 fwrite(&tmp,sizeof(tmp),1,f); //commit_n
 		tmp=cur_file.size(); fwrite(&tmp,sizeof(tmp),1,f); //file_n
 		fwrite(&tmp,sizeof(tmp),1,f); //add_n
 		tmp=0;
-		fwrite(&tmp,sizeof(tmp),1,f); fwrite(&tmp,sizeof(tmp),1,f);	fwrite(&tmp,sizeof(tmp),1,f); //modified, copied, deleted
+		fwrite(&tmp,sizeof(tmp),1,f); //modified_n
+		fwrite(&tmp,sizeof(tmp),1,f); //copied_n
+		fwrite(&tmp,sizeof(tmp),1,f); //deleted_n
 
 		fseek(f,sizeof(uint32_t),SEEK_CUR);//leave a blank to fill commit_size later
 
 		//all files are new files
 		for(auto& item: cur_file)
 		{
-			tmp=item.name.length(); fwrite(&tmp,sizeof(tmp),1,f);
+			uint8_t len = item.name.length(); fwrite(&len,sizeof(len),1,f); 
 			fwrite(item.name.data(),sizeof(char),item.name.length(),f);
 		}
 		
 		//md5 part
 		for(auto& item: cur_file)
 		{
-			tmp=item.name.length(); fwrite(&tmp,sizeof(tmp),1,f);
+			uint8_t len = item.name.length(); fwrite(&len,sizeof(len),1,f); 
 			fwrite(item.name.data(),sizeof(char),item.name.length(),f);
-			fwrite(item.md5,sizeof(char),sizeof(item.md5),f);
+			fwrite(item.md5,sizeof(char),MD5_DIGEST_LENGTH,f);
 		}
 		
 		//fill commit_size
@@ -261,39 +262,38 @@ void commit(const char dir[])
 		compare_last(cur_file, last_file, new_file, modified, copied, deleted);
 		
 		fseek(f,0,SEEK_END);
-		uint32_t st=ftell(f);
+		uint32_t commit_st_pos=ftell(f);
 
-		commit_n++; fwrite(&commit_n, sizeof(commit_n),1,f); //commit_n
-		uint32_t tmp=cur_file.size();
-		fwrite(&tmp,sizeof(uint32_t),1,f); //file_n
-		tmp=new_file.size(); fwrite(&tmp,sizeof(uint32_t),1,f); //add_n
-		tmp=modified.size(); fwrite(&tmp,sizeof(uint32_t),1,f); //modified_n
-		tmp=copied.size(); fwrite(&tmp,sizeof(uint32_t),1,f); //copied_n
-		tmp=deleted.size(); fwrite(&tmp,sizeof(uint32_t),1,f); //deleted_n
+		commit_n++; 					fwrite(&commit_n, sizeof(commit_n),1,f); //commit_n
+		uint32_t tmp=cur_file.size();	fwrite(&tmp,sizeof(tmp),1,f); //file_n
+		tmp=new_file.size();			fwrite(&tmp,sizeof(tmp),1,f); //add_n
+		tmp=modified.size();			fwrite(&tmp,sizeof(tmp),1,f); //modified_n
+		tmp=copied.size();				fwrite(&tmp,sizeof(tmp),1,f); //copied_n
+		tmp=deleted.size();				fwrite(&tmp,sizeof(tmp),1,f); //deleted_n
 		
 		fseek(f,sizeof(uint32_t),SEEK_CUR); //leave a blank to fill commit_size later
 
 		for(auto &item: new_file)
 		{
-			tmp=item->name.length(); fwrite(&tmp,sizeof(uint32_t),1,f); 
+			uint8_t len = item->name.length(); fwrite(&len,sizeof(len),1,f); 
 			fwrite(item->name.data(),sizeof(char), item->name.length(), f);
 		}
 		for(auto &item: modified)
 		{
-			tmp=item->name.length(); fwrite(&tmp,sizeof(uint32_t),1,f); 
+			uint8_t len = item->name.length(); fwrite(&len,sizeof(len),1,f); 
 			fwrite(item->name.data(),sizeof(char), item->name.length(), f);
 		}
 		for(auto &item: copied)
 		{
-			tmp=item.first->name.length(); fwrite(&tmp,sizeof(uint32_t),1,f); 
+			uint8_t len = item.first->name.length(); fwrite(&len,sizeof(len),1,f); 
 			fwrite(item.first->name.data(),sizeof(char), item.first->name.length(), f);
 
-			tmp=item.second->name.length(); fwrite(&tmp,sizeof(uint32_t),1,f); 
+			len = item.second->name.length(); fwrite(&len,sizeof(len),1,f); 
 			fwrite(item.second->name.data(),sizeof(char), item.second->name.length(), f);
 		}
 		for(auto &item: deleted)
 		{
-			tmp=item->name.length(); fwrite(&tmp,sizeof(uint32_t),1,f); 
+			uint8_t len = item->name.length(); fwrite(&len,sizeof(len),1,f); 
 			fwrite(item->name.data(),sizeof(char), item->name.length(), f);
 		}
 
@@ -302,33 +302,98 @@ void commit(const char dir[])
 		{
 			tmp=item.name.length(); fwrite(&tmp,sizeof(tmp),1,f);
 			fwrite(item.name.data(),sizeof(char),item.name.length(),f);
-			fwrite(item.md5,sizeof(char),sizeof(item.md5),f);
+			fwrite(item.md5,sizeof(char),MD5_DIGEST_LENGTH,f);
 		}
 
 		//commit_size
-		tmp=ftell(f)-st;
-		fseek(f,st+24,SEEK_SET);
+		tmp=ftell(f)-commit_st_pos;
+		fseek(f,commit_st_pos+24,SEEK_SET);
 		fwrite(&tmp, sizeof(tmp), 1, f);
 	}
 }
 void log(int n, const char dir[])
 {
+	FILE *f = fopen(((string)dir+".loser_record").data(), "rb");
+	deque<uint32_t> commit_log;
+	uint32_t commit_n = get_last_n_file_n_pos(f, commit_log,n);
 
+	for (auto pos:commit_log)
+	{
+		fseek(f, pos, SEEK_SET);
+		uint32_t file_n, add_n, modified_n, copied_n, deleted_n;
+		fread(&file_n, sizeof(add_n), 1, f);
+		fread(&add_n, sizeof(add_n), 1, f);
+		fread(&modified_n, sizeof(add_n), 1, f);
+		fread(&copied_n, sizeof(add_n), 1, f);
+		fread(&deleted_n, sizeof(add_n), 1, f);
+		fseek(f, sizeof(uint32_t), SEEK_CUR); //skip commit size
+
+		printf("# commit %u\n", commit_n--);
+		puts("[new_file]");
+		while(add_n--)
+		{
+			uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
+			char filename[256];	fread(filename, sizeof(char), filename_len, f);
+			puts(filename);
+		}
+		puts("[modified]");
+		while(modified_n--)
+		{
+			uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
+			char filename[256];	fread(filename, sizeof(char), filename_len, f);
+			puts(filename);
+		}
+		puts("[copied]");
+		while(copied_n--)
+		{
+			uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
+			char a[256]; fread(a, sizeof(char), filename_len, f);
+			
+			fread(&filename_len, sizeof(filename_len), 1, f);
+			char b[256]; fread(b, sizeof(char), filename_len, f);
+
+			printf("%s => %s\n", a, b);
+		}
+		puts("[deleted]");
+		while(deleted_n--)
+		{
+			uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
+			char filename[256];	fread(filename, sizeof(char), filename_len, f);
+			puts(filename);
+		}
+
+		puts("(MD5)");
+		while(file_n--)
+		{
+			uint8_t filename_len; fread(&filename_len, sizeof(filename_len), 1, f);
+			char filename[256];	fread(filename, sizeof(char), filename_len, f);
+			char md5[MD5_DIGEST_LENGTH]; fread(md5, sizeof(char), MD5_DIGEST_LENGTH, f);
+
+			printf("%s ", filename);
+			print_md5(md5);
+			printf("\n");
+		}
+
+		printf("\n");
+	}
 }
 int main(int argc, char const *argv[])
 {
-	if(strcmp(argv[1],"status")==0)
+	/*if(strcmp(argv[1],"status")==0)
 		status(argv[2]);
 	else if(strcmp(argv[1],"commit")==0)
 		commit(argv[2]);
 	else
-		log(atoi(argv[2]), argv[3]);
+		log(atoi(argv[2]), argv[3]);*/
 	//status("test_1/");
-	
+	FILE *f = fopen("test_1/.loser_record", "rb");
+	deque<uint32_t> c;
+	get_last_n_file_n_pos(f, c);
+
 	/*vector<FileMd5> f;load_files("test_1/",f);
 	printf("%zu\n",f.size());
 	for(auto &item: f)
-		printf("%s ",item.name.data()), item.print_md5(),puts("");*/
+		printf("%s ",item.name.data()), print_md5(item.md5),puts("");*/
 
 
 	return 0;
