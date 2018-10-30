@@ -163,7 +163,7 @@ void compare_last(vector<FileMd5>& cur_file, vector<FileMd5>& last_file,
 		{
 			auto it = lower_bound(last_file_md5.begin(), last_file_md5.end(), cur_it->md5,
 									[](const FileMd5 *a, const unsigned char *key) -> bool { return memcmp(a->md5, key, MD5_DIGEST_LENGTH) < 0; });
-			if (it == last_file_md5.end())
+			if (it == last_file_md5.end() || memcmp(it[0]->md5, cur_it->md5, MD5_DIGEST_LENGTH)!=0)
 				new_file.push_back(&cur_it[0]);
 			else
 				copied.push_back(make_pair(*it, &cur_it[0]));
@@ -180,7 +180,7 @@ void compare_last(vector<FileMd5>& cur_file, vector<FileMd5>& last_file,
 	{
 		auto it = lower_bound(last_file_md5.begin(), last_file_md5.end(), cur_it->md5,
 								[](const FileMd5 *a, const unsigned char *key) -> bool { return memcmp(a->md5, key, MD5_DIGEST_LENGTH) < 0; });
-		if (it == last_file_md5.end())
+		if (it == last_file_md5.end() || memcmp(it[0]->md5, cur_it->md5, MD5_DIGEST_LENGTH)!=0)
 			new_file.push_back(&cur_it[0]);
 		else
 			copied.push_back(make_pair(*it, &cur_it[0]));
