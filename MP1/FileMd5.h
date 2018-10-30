@@ -9,7 +9,7 @@ static char buf[1<<20]={0};
 void print_md5(unsigned char md5[16])
 {
 	for (int i = 0; i < MD5_DIGEST_LENGTH;i++)
-		printf("%hhx", md5[i]);
+		printf("%02hhx", md5[i]);
 }
 
 class FileMd5
