@@ -32,7 +32,7 @@ inline void read_int(FILE *f, T& first, Args&... args)
 	read_int(f, args...);
 }
 
-inline void read_str(FILE *f,char *str,size_t n)
+inline void read_str(FILE *f,unsigned char *str,size_t n)
 {
 	fread(str, sizeof(char), n, f);
 	str[n] = '\0';
@@ -64,7 +64,7 @@ inline uint32_t get_last_n_file_n_pos(FILE *f, deque<uint32_t> &commit_log, size
 	return commit_count;
 }
 
-inline void load_files(const char dir[], vector<FileMd5>& file)
+inline void load_files(const unsigned char dir[], vector<FileMd5>& file)
 {
 	DIR *d = opendir(dir);
 	assert(d != NULL);
@@ -120,8 +120,8 @@ inline uint32_t load_files(FILE *f, vector<FileMd5>& file)
 	for (uint32_t i = 0; i < file_n; i++)
 	{
 		uint8_t filename_len; read_int(f, filename_len);
-		char filename[256];	read_str(f, filename, filename_len);
-		char md5[MD5_DIGEST_LENGTH]; fread(md5, sizeof(char), MD5_DIGEST_LENGTH, f);
+		unsigned char filename[256];	read_str(f, filename, filename_len);
+		unsigned char md5[MD5_DIGEST_LENGTH]; fread(md5, sizeof(char), MD5_DIGEST_LENGTH, f);
 		file.push_back(FileMd5{filename,md5});
 	}
 
@@ -186,7 +186,7 @@ void compare_last(vector<FileMd5>& cur_file, vector<FileMd5>& last_file,
 			copied.push_back(make_pair(*it, &cur_it[0]));
 	}
 }
-void status(const char dir[])
+void status(const unsigned char dir[])
 {
 	vector<FileMd5> cur_file; load_files(dir,cur_file);
 
@@ -225,7 +225,7 @@ void status(const char dir[])
 		fclose(los);
 	}
 }
-void commit(const char dir[])
+void commit(const unsigned char dir[])
 {
 	vector<FileMd5> cur_file; load_files(dir, cur_file);
 	//note that we can't use "ab+" since frwite will be always write to the	end of file, even if we used fseek
@@ -324,7 +324,7 @@ void commit(const char dir[])
 		fwrite(&tmp, sizeof(tmp), 1, f);
 	}
 }
-void log(int n, const char dir[])
+void log(int n, const unsigned char dir[])
 {
 	FILE *f = fopen(((string)dir+".loser_record").data(), "rb");
 	deque<uint32_t> commit_log;
@@ -345,24 +345,24 @@ void log(int n, const char dir[])
 		while(add_n--)
 		{
 			uint8_t filename_len; read_int(f, filename_len);
-			char filename[256]; read_str(f, filename, filename_len);
+			unsigned char filename[256]; read_str(f, filename, filename_len);
 			puts(filename);
 		}
 		puts("[modified]");
 		while(modified_n--)
 		{
 			uint8_t filename_len; read_int(f, filename_len);
-			char filename[256]; read_str(f, filename, filename_len);
+			unsigned char filename[256]; read_str(f, filename, filename_len);
 			puts(filename);
 		}
 		puts("[copied]");
 		while(copied_n--)
 		{
 			uint8_t filename_len; read_int(f, filename_len);
-			char a[256]; read_str(f, a, filename_len);
+			unsigned char a[256]; read_str(f, a, filename_len);
 			
 			read_int(f, filename_len);
-			char b[256]; read_str(f, b, filename_len);
+			unsigned char b[256]; read_str(f, b, filename_len);
 
 			printf("%s => %s\n", a, b);
 		}
@@ -370,7 +370,7 @@ void log(int n, const char dir[])
 		while(deleted_n--)
 		{
 			uint8_t filename_len; read_int(f, filename_len);
-			char filename[256];	read_str(f, filename, filename_len);
+			unsigned char filename[256];	read_str(f, filename, filename_len);
 			puts(filename);
 		}
 
@@ -378,7 +378,7 @@ void log(int n, const char dir[])
 		while(file_n--)
 		{
 			uint8_t filename_len; read_int(f, filename_len);
-			char filename[256];	read_str(f, filename, filename_len);
+			unsigned char filename[256];	read_str(f, filename, filename_len);
 			unsigned char md5[MD5_DIGEST_LENGTH]; fread(md5, sizeof(char), MD5_DIGEST_LENGTH, f);
 
 			printf("%s ", filename);
