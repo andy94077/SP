@@ -32,7 +32,7 @@ inline void read_int(FILE *f, T& first, Args&... args)
 	read_int(f, args...);
 }
 
-inline void read_str(FILE *f,unsigned char *str,size_t n)
+inline void read_str(FILE *f,char *str,size_t n)
 {
 	fread(str, sizeof(char), n, f);
 	str[n] = '\0';
@@ -120,7 +120,7 @@ inline uint32_t load_files(FILE *f, vector<FileMd5>& file)
 	for (uint32_t i = 0; i < file_n; i++)
 	{
 		uint8_t filename_len; read_int(f, filename_len);
-		unsigned char filename[256];	read_str(f, filename, filename_len);
+		char filename[256];	read_str(f, filename, filename_len);
 		unsigned char md5[MD5_DIGEST_LENGTH]; fread(md5, sizeof(char), MD5_DIGEST_LENGTH, f);
 		file.push_back(FileMd5{filename,md5});
 	}
@@ -345,24 +345,24 @@ void log(int n, const char dir[])
 		while(add_n--)
 		{
 			uint8_t filename_len; read_int(f, filename_len);
-			unsigned char filename[256]; read_str(f, filename, filename_len);
+			char filename[256]; read_str(f, filename, filename_len);
 			puts(filename);
 		}
 		puts("[modified]");
 		while(modified_n--)
 		{
 			uint8_t filename_len; read_int(f, filename_len);
-			unsigned char filename[256]; read_str(f, filename, filename_len);
+			char filename[256]; read_str(f, filename, filename_len);
 			puts(filename);
 		}
 		puts("[copied]");
 		while(copied_n--)
 		{
 			uint8_t filename_len; read_int(f, filename_len);
-			unsigned char a[256]; read_str(f, a, filename_len);
+			char a[256]; read_str(f, a, filename_len);
 			
 			read_int(f, filename_len);
-			unsigned char b[256]; read_str(f, b, filename_len);
+			char b[256]; read_str(f, b, filename_len);
 
 			printf("%s => %s\n", a, b);
 		}
@@ -370,7 +370,7 @@ void log(int n, const char dir[])
 		while(deleted_n--)
 		{
 			uint8_t filename_len; read_int(f, filename_len);
-			unsigned char filename[256];	read_str(f, filename, filename_len);
+			char filename[256];	read_str(f, filename, filename_len);
 			puts(filename);
 		}
 
@@ -378,7 +378,7 @@ void log(int n, const char dir[])
 		while(file_n--)
 		{
 			uint8_t filename_len; read_int(f, filename_len);
-			unsigned char filename[256];	read_str(f, filename, filename_len);
+			char filename[256];	read_str(f, filename, filename_len);
 			unsigned char md5[MD5_DIGEST_LENGTH]; fread(md5, sizeof(char), MD5_DIGEST_LENGTH, f);
 
 			printf("%s ", filename);
