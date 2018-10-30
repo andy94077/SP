@@ -64,7 +64,7 @@ inline uint32_t get_last_n_file_n_pos(FILE *f, deque<uint32_t> &commit_log, size
 	return commit_count;
 }
 
-inline void load_files(const unsigned char dir[], vector<FileMd5>& file)
+inline void load_files(const char dir[], vector<FileMd5>& file)
 {
 	DIR *d = opendir(dir);
 	assert(d != NULL);
@@ -186,7 +186,7 @@ void compare_last(vector<FileMd5>& cur_file, vector<FileMd5>& last_file,
 			copied.push_back(make_pair(*it, &cur_it[0]));
 	}
 }
-void status(const unsigned char dir[])
+void status(const char dir[])
 {
 	vector<FileMd5> cur_file; load_files(dir,cur_file);
 
@@ -225,7 +225,7 @@ void status(const unsigned char dir[])
 		fclose(los);
 	}
 }
-void commit(const unsigned char dir[])
+void commit(const char dir[])
 {
 	vector<FileMd5> cur_file; load_files(dir, cur_file);
 	//note that we can't use "ab+" since frwite will be always write to the	end of file, even if we used fseek
@@ -324,7 +324,7 @@ void commit(const unsigned char dir[])
 		fwrite(&tmp, sizeof(tmp), 1, f);
 	}
 }
-void log(int n, const unsigned char dir[])
+void log(int n, const char dir[])
 {
 	FILE *f = fopen(((string)dir+".loser_record").data(), "rb");
 	deque<uint32_t> commit_log;
