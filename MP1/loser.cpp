@@ -386,7 +386,7 @@ void log(int n, const char dir[])
 			printf("\n");
 		}
 
-		if(it+1 != commit_log.cend())	printf("\n");
+		printf("\n");
 	}
 }
 int main(int argc, char const *argv[])
