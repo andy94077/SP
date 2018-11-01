@@ -125,9 +125,6 @@ inline uint32_t load_files(FILE *f, vector<FileMd5>& file)
 		file.push_back(FileMd5{filename,md5});
 	}
 
-	//sort files by name
-	sort(file.begin(), file.end());
-
 	return commit_n;
 }
 
