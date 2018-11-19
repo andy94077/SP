@@ -1,10 +1,11 @@
 CC=g++
-CXXFLAGS= -Wextra -Wall -std=c++17 -lcrypto
+CXXFLAGS= -Wextra -Wall -std=c++17
+WITHMD5= -lcrypto
 
 all: loser_peer
-loser: loser_peer.cpp
-	$(CC) $(CXXFLAGS) -O2 -o loser loser.cpp
-debug: loser.cpp
-	$(CC) $(CXXFLAGS) -g -o loser loser.cpp
+loser_peer: loser_peer.cpp
+	$(CC) $(CXXFLAGS) $(WITHMD5) -O2 -o $@ $<
+debug: loser_peer.cpp
+	$(CC) $(CXXFLAGS) $(WITHMD5) -g -o $@ $<
 clean:
-	-@rm -f loser
+	-@rm -f loser_peer
