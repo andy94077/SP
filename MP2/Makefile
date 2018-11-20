@@ -4,7 +4,7 @@ WITHMD5= -lcrypto
 
 all: loser_peer
 loser_peer: loser_peer.cpp
-	$(CC) $(CXXFLAGS) $(WITHMD5) -O2 -o $@ $<
+	$(CC) $(CXXFLAGS) -O2 -o $@ $<
 debug: loser_peer.cpp
 	$(CC) $(CXXFLAGS) $(WITHMD5) -g -o $@ $<
 clean:

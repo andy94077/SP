@@ -12,7 +12,7 @@ using namespace std;
 class Config
 {
 public:
-    Config(const char path[]):_fail(false)
+    Config(const char path[]):peer_n(0),_fail(false)
     {
     	ifstream file(path);
 		if(file.fail())
@@ -21,28 +21,28 @@ public:
 			return;
 		}
 		file.ignore(numeric_limits<streamsize>::max(),'=');
-    	file>>user_name;
-
-    	file.ignore(numeric_limits<streamsize>::max(),'=');
-    	string str;
-    	getline(file,str);
-    	stringstream ss(str);
-		int i = 0;
-		while (ss >> peer_name[i++]);
-		if(peer_n==0)	peer_n = i;
+		file.ignore(1,' ');
+		file >> user_socket;
+		user_socket += ".socket";
 
 		file.ignore(numeric_limits<streamsize>::max(), '=');
-		file.ignore();
+		string str;
+    	getline(file,str);
+    	stringstream ss(str);
+		while (ss >> peer_socket[peer_n])
+			peer_socket[peer_n++]+=".socket";
+
+		file.ignore(numeric_limits<streamsize>::max(), '=');
+		file.ignore(1,' ');
     	getline(file,repo);
 
 		file.close();
 	}
-	bool fail() { return _fail || user_name=="" || peer_n<=0 || repo==""; }
-	string user_name;
-    string peer_name[5];
+	bool fail() { return _fail || user_socket=="" || peer_n<=0 || repo==""; }
+	string user_socket;
+    string peer_socket[4];
     string repo;
-	static int peer_n;
+	int peer_n;
 private:
 	bool _fail;
 };
-int Config::peer_n=0;
