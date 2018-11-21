@@ -16,8 +16,11 @@ loser
 .ycm_extra_conf.py
 loser_peer
 test
-select_ex
-socket_ex
+MP2/select_ex
+MP2/socket_ex
+MP2/*.config
+MP2/*.socket
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
