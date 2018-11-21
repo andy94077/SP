@@ -51,13 +51,13 @@ int main(int argc, char *argv[])
     if(config.fail())
         exit(EXIT_FAILURE);
 
-    cout << "user_socket:" << config.user_socket << '\n';
+    cout << "## user_socket:" << config.user_socket << '\n';
     for (int i = 0; i < config.peer_n;i++)
-        cout << "peer_socket:" << config.peer_socket[i] << '\n';
+        cout << "## peer_socket:" << config.peer_socket[i] << '\n';
 
     // Create host UNIX socket
     int listen_sd = create_listen_sd(config.user_socket);
-    printf("listen_sd:%d\n", listen_sd);
+    printf("## listen_sd:%d\n", listen_sd);
 
     fd_set read_set;
     FD_ZERO(&read_set);
@@ -80,7 +80,6 @@ int main(int argc, char *argv[])
      * You may look up the manpage select(2) for details.
      */
     const int max_fd = sysconf(_SC_OPEN_MAX);
-    printf("max_fd:%d\n", max_fd);
     bool quit = false;
     while (!quit)
     {
@@ -115,16 +114,13 @@ int main(int argc, char *argv[])
             }
             else if (i == listen_sd)//new connection
             {
-                sockaddr_storage remote_addr;
-                socklen_t socket_len;
-                int peer_sd = accept(listen_sd, (sockaddr *)&remote_addr, &socket_len);
+                int peer_sd = accept(listen_sd, NULL, NULL);
                 if (peer_sd < 0)
                     exit(EXIT_FAILURE);
 
                 //TODO Store the peer fd 
                 FD_SET(peer_sd, &read_set);
-                //send_peer_sd=connect()
-                printf("new connection on sd %d\n", peer_sd);
+                printf("## new connection on sd %d\n", peer_sd);
             }
             else//received data from other peers
             {
@@ -136,7 +132,7 @@ int main(int argc, char *argv[])
                     FD_CLR(i, &read_set);
                 }
                 else
-                    printf("recv from %d, %d bytes:%s\n",i,bytes,buf);
+                    printf("recv from sd %d, %d bytes:%s\n",i,bytes,buf);
 
             }
         }

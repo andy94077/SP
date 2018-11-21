@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <dirent.h>
 /* This header provides example code to handle Configs.
  * The config struct stores whole socket path instead of names.
  * You are free to modifiy it to fit your needs.
@@ -37,6 +38,12 @@ public:
     	getline(file,repo);
 
 		file.close();
+
+		DIR *dir_exist = opendir(repo.c_str());
+		if (dir_exist!=NULL)
+			closedir(dir_exist);
+		else
+			_fail = true;
 	}
 	bool fail() { return _fail || user_socket=="" || peer_n<=0 || repo==""; }
 	string user_socket;
