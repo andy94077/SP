@@ -20,6 +20,7 @@ MP2/select_ex
 MP2/socket_ex
 MP2/*.config
 MP2/*.socket
+MP2/tt
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
