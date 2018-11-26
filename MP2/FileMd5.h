@@ -1,3 +1,6 @@
+#ifndef _INCLUDED_FILEMD5_
+#define _INCLUDED_FILEMD5_
+
 #include <cstdio>
 #include <string>
 #include <cstring>
@@ -10,16 +13,23 @@ void print_md5(unsigned char md5[16])
 	for (int i = 0; i < MD5_DIGEST_LENGTH;i++)
 		printf("%02hhx", md5[i]);
 }
+void md5_to_string(string& md5, unsigned char c_md5[])
+{
+	char temp[20] = {0};
+	for (int i = 0; i < MD5_DIGEST_LENGTH; i++)
+		sprintf(temp,"%02hhx", c_md5[i]);
+	md5 = temp;
+}
 class FileMd5
 {
   private:
 	void set_md5();
 
   public:
-	unsigned char md5[MD5_DIGEST_LENGTH];
-	string name;
-	FileMd5(const string& path) : name(path) { set_md5(); name.erase(0,name.find_last_of('/')+1);}
-	FileMd5(const char *__name, const unsigned char *__md5) : name(__name) { memcpy(md5, __md5, MD5_DIGEST_LENGTH); }
+	string name, md5;
+	FileMd5(const string& path) : name(path,path.find_last_of('/')+1) { set_md5();}
+	FileMd5(const char *__name, const string& __md5) : name(__name),md5(__md5) { }
+	FileMd5(const string& __name, const string& __md5) : name(__name),md5(__md5) { }
 	
 	bool operator<(const FileMd5 &a) { return name < a.name; }
 };
@@ -27,7 +37,8 @@ static char buf[1<<20];
 
 inline void FileMd5::set_md5()
 {
-	memset(buf,0,sizeof(buf));
+	unsigned char __md5[MD5_DIGEST_LENGTH]={0};
+	memset(buf, 0, sizeof(buf));
 	FILE *f=fopen(name.data(), "rb");
 	assert(f!=NULL);
 
@@ -37,5 +48,9 @@ inline void FileMd5::set_md5()
 	while((n=fread(buf,sizeof(char),sizeof(buf),f))>0)
 		MD5_Update(&context,buf,n);
 	fclose(f);
-	MD5_Final(md5,&context);
+	MD5_Final(__md5,&context);
+
+	md5_to_string(md5,__md5);
 }
+
+#endif //_INCLUDED_FILEMD5_
