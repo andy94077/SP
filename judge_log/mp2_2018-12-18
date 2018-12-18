@@ -1,0 +1,153 @@
+[DEBUG]	(2018-12-18 15:24:49)	B06902001:	Start judging B06902001
+[INFO]	(2018-12-18 15:24:49)	B06902001.Mp2Test.simple_history_list_test:	Start simple_history_list_test test
+[INFO]	(2018-12-18 15:24:50)	B06902001.Mp2Test.git_clean_and_checkout:	git_stdout: b'HEAD is now at e5257e3 add example.cpp\n'
+[INFO]	(2018-12-18 15:24:50)	B06902001.Mp2Test.git_clean_and_checkout:	git_stdout: b'Removing MP2/loser_peer\n'
+[INFO]	(2018-12-18 15:24:50)	B06902001.Mp2Test.git_clean_and_checkout:	git_stderr: b'HEAD is now at e5257e3 add example.cpp\n'
+[INFO]	(2018-12-18 15:24:51)	B06902001.Mp2Test.git_clean_and_checkout:	make_stdout: b'g++ -Wextra -Wall -std=c++17 -O2 -o loser_peer loser_peer.cpp\n'
+[INFO]	(2018-12-18 15:24:53)	B06902001.Mp2Test.simple_history_list_test.B06902001-resol_peer:	Config file /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmpkpdc2myx content
+[INFO]	(2018-12-18 15:24:53)	B06902001.Mp2Test.simple_history_list_test.B06902001-resol_peer:	----------------
+[INFO]	(2018-12-18 15:24:53)	B06902001.Mp2Test.simple_history_list_test.B06902001-resol_peer:	name = B06902001-resol
+[INFO]	(2018-12-18 15:24:53)	B06902001.Mp2Test.simple_history_list_test.B06902001-resol_peer:	peers = 
+[INFO]	(2018-12-18 15:24:53)	B06902001.Mp2Test.simple_history_list_test.B06902001-resol_peer:	repo = /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmpfyqb9zif
+[INFO]	(2018-12-18 15:24:53)	B06902001.Mp2Test.simple_history_list_test.B06902001-resol_peer:	----------------
+[DEBUG]	(2018-12-18 15:24:54)	B06902001.Mp2Test.simple_history_list_test.B06902001-resol_peer:	Start peer "B06902001-resol" process
+[DEBUG]	(2018-12-18 15:24:55)	B06902001.Mp2Test.simple_history_list_test.B06902001-resol_peer:	Kill peer "B06902001-resol" process
+[INFO]	(2018-12-18 15:24:55)	B06902001.Mp2Test.simple_history_list_test:	Finish simple_history_list_test test
+[INFO]	(2018-12-18 15:24:55)	B06902001.Mp2Test.simple_local_repo_test:	Start simple_local_repo_test test
+[INFO]	(2018-12-18 15:24:55)	B06902001.Mp2Test.git_clean_and_checkout:	git_stdout: b'HEAD is now at e5257e3 add example.cpp\n'
+[INFO]	(2018-12-18 15:24:55)	B06902001.Mp2Test.git_clean_and_checkout:	git_stdout: b'Removing MP2/loser_peer\n'
+[INFO]	(2018-12-18 15:24:55)	B06902001.Mp2Test.git_clean_and_checkout:	git_stderr: b'HEAD is now at e5257e3 add example.cpp\n'
+[INFO]	(2018-12-18 15:24:55)	B06902001.Mp2Test.git_clean_and_checkout:	make_stdout: b'g++ -Wextra -Wall -std=c++17 -O2 -o loser_peer loser_peer.cpp\n'
+[INFO]	(2018-12-18 15:24:58)	B06902001.Mp2Test.simple_local_repo_test.B06902001-resol_peer:	Config file /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmpcpdxhkjr content
+[INFO]	(2018-12-18 15:24:58)	B06902001.Mp2Test.simple_local_repo_test.B06902001-resol_peer:	----------------
+[INFO]	(2018-12-18 15:24:58)	B06902001.Mp2Test.simple_local_repo_test.B06902001-resol_peer:	name = B06902001-resol
+[INFO]	(2018-12-18 15:24:58)	B06902001.Mp2Test.simple_local_repo_test.B06902001-resol_peer:	peers = 
+[INFO]	(2018-12-18 15:24:58)	B06902001.Mp2Test.simple_local_repo_test.B06902001-resol_peer:	repo = /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmpjkmq1kax
+[INFO]	(2018-12-18 15:24:58)	B06902001.Mp2Test.simple_local_repo_test.B06902001-resol_peer:	----------------
+[DEBUG]	(2018-12-18 15:24:58)	B06902001.Mp2Test.simple_local_repo_test.B06902001-resol_peer:	Start peer "B06902001-resol" process
+[DEBUG]	(2018-12-18 15:24:58)	B06902001.Mp2Test.simple_local_repo_test.B06902001-resol_peer:	Kill peer "B06902001-resol" process
+[INFO]	(2018-12-18 15:24:58)	B06902001.Mp2Test.simple_local_repo_test:	Finish simple_local_repo_test test
+[INFO]	(2018-12-18 15:24:58)	B06902001.Mp2Test.simple_remote_transfer_test:	Start simple_remote_transfer_test test
+[INFO]	(2018-12-18 15:24:59)	B06902001.Mp2Test.git_clean_and_checkout:	git_stdout: b'HEAD is now at e5257e3 add example.cpp\n'
+[INFO]	(2018-12-18 15:24:59)	B06902001.Mp2Test.git_clean_and_checkout:	git_stdout: b'Removing MP2/loser_peer\n'
+[INFO]	(2018-12-18 15:24:59)	B06902001.Mp2Test.git_clean_and_checkout:	git_stderr: b'HEAD is now at e5257e3 add example.cpp\n'
+[INFO]	(2018-12-18 15:24:59)	B06902001.Mp2Test.git_clean_and_checkout:	make_stdout: b'g++ -Wextra -Wall -std=c++17 -O2 -o loser_peer loser_peer.cpp\n'
+[INFO]	(2018-12-18 15:25:02)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-resol_peer:	Config file /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmp6vigcm0q content
+[INFO]	(2018-12-18 15:25:02)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-resol_peer:	----------------
+[INFO]	(2018-12-18 15:25:02)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-resol_peer:	name = B06902001-resol
+[INFO]	(2018-12-18 15:25:02)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-resol_peer:	peers = B06902001-reep
+[INFO]	(2018-12-18 15:25:02)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-resol_peer:	repo = /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmp7cpxwf88
+[INFO]	(2018-12-18 15:25:02)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-resol_peer:	----------------
+[INFO]	(2018-12-18 15:25:02)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-reep_peer:	Config file /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmp1gxxai_e content
+[INFO]	(2018-12-18 15:25:02)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-reep_peer:	----------------
+[INFO]	(2018-12-18 15:25:02)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-reep_peer:	name = B06902001-reep
+[INFO]	(2018-12-18 15:25:02)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-reep_peer:	peers = B06902001-resol
+[INFO]	(2018-12-18 15:25:02)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-reep_peer:	repo = /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmp1shcl53e
+[INFO]	(2018-12-18 15:25:02)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-reep_peer:	----------------
+[DEBUG]	(2018-12-18 15:25:02)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-resol_peer:	Start peer "B06902001-resol" process
+[DEBUG]	(2018-12-18 15:25:02)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-reep_peer:	Start peer "B06902001-reep" process
+[DEBUG]	(2018-12-18 15:25:03)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-resol_peer:	Kill peer "B06902001-resol" process
+[DEBUG]	(2018-12-18 15:25:03)	B06902001.Mp2Test.simple_remote_transfer_test.B06902001-reep_peer:	Kill peer "B06902001-reep" process
+[INFO]	(2018-12-18 15:25:03)	B06902001.Mp2Test.simple_remote_transfer_test:	Finish simple_remote_transfer_test test
+[INFO]	(2018-12-18 15:25:03)	B06902001:	The program fails simple_remote_transfer_test, skip harder hard_remote_transfer_test.
+[INFO]	(2018-12-18 15:25:03)	B06902001.Mp2Test.simple_log_update_test:	Start simple_log_update_test test
+[INFO]	(2018-12-18 15:25:03)	B06902001.Mp2Test.git_clean_and_checkout:	git_stdout: b'HEAD is now at e5257e3 add example.cpp\n'
+[INFO]	(2018-12-18 15:25:03)	B06902001.Mp2Test.git_clean_and_checkout:	git_stdout: b'Removing MP2/loser_peer\n'
+[INFO]	(2018-12-18 15:25:03)	B06902001.Mp2Test.git_clean_and_checkout:	git_stderr: b'HEAD is now at e5257e3 add example.cpp\n'
+[INFO]	(2018-12-18 15:25:04)	B06902001.Mp2Test.git_clean_and_checkout:	make_stdout: b'g++ -Wextra -Wall -std=c++17 -O2 -o loser_peer loser_peer.cpp\n'
+[INFO]	(2018-12-18 15:25:07)	B06902001.Mp2Test.simple_log_update_test.B06902001-resol_peer:	Config file /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmpxjeqvpet content
+[INFO]	(2018-12-18 15:25:07)	B06902001.Mp2Test.simple_log_update_test.B06902001-resol_peer:	----------------
+[INFO]	(2018-12-18 15:25:07)	B06902001.Mp2Test.simple_log_update_test.B06902001-resol_peer:	name = B06902001-resol
+[INFO]	(2018-12-18 15:25:07)	B06902001.Mp2Test.simple_log_update_test.B06902001-resol_peer:	peers = B06902001-reep
+[INFO]	(2018-12-18 15:25:07)	B06902001.Mp2Test.simple_log_update_test.B06902001-resol_peer:	repo = /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmpyvn4j70t
+[INFO]	(2018-12-18 15:25:07)	B06902001.Mp2Test.simple_log_update_test.B06902001-resol_peer:	----------------
+[INFO]	(2018-12-18 15:25:07)	B06902001.Mp2Test.simple_log_update_test.B06902001-reep_peer:	Config file /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmp5gahowfj content
+[INFO]	(2018-12-18 15:25:07)	B06902001.Mp2Test.simple_log_update_test.B06902001-reep_peer:	----------------
+[INFO]	(2018-12-18 15:25:07)	B06902001.Mp2Test.simple_log_update_test.B06902001-reep_peer:	name = B06902001-reep
+[INFO]	(2018-12-18 15:25:07)	B06902001.Mp2Test.simple_log_update_test.B06902001-reep_peer:	peers = B06902001-resol
+[INFO]	(2018-12-18 15:25:07)	B06902001.Mp2Test.simple_log_update_test.B06902001-reep_peer:	repo = /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmpgt1yk2j0
+[INFO]	(2018-12-18 15:25:07)	B06902001.Mp2Test.simple_log_update_test.B06902001-reep_peer:	----------------
+[DEBUG]	(2018-12-18 15:25:07)	B06902001.Mp2Test.simple_log_update_test.B06902001-resol_peer:	Start peer "B06902001-resol" process
+[DEBUG]	(2018-12-18 15:25:07)	B06902001.Mp2Test.simple_log_update_test.B06902001-reep_peer:	Start peer "B06902001-reep" process
+[DEBUG]	(2018-12-18 15:25:08)	B06902001.Mp2Test.simple_log_update_test.B06902001-resol_peer:	Kill peer "B06902001-resol" process
+[DEBUG]	(2018-12-18 15:25:08)	B06902001.Mp2Test.simple_log_update_test.B06902001-reep_peer:	Kill peer "B06902001-reep" process
+[INFO]	(2018-12-18 15:25:08)	B06902001.Mp2Test.simple_log_update_test:	Finish simple_log_update_test test
+[INFO]	(2018-12-18 15:25:08)	B06902001:	The program fails simple_log_update_test, skip harder hard_log_update_test.
+[INFO]	(2018-12-18 15:25:08)	B06902001.Mp2Test.simple_rm_test:	Start simple_rm_test test
+[INFO]	(2018-12-18 15:25:08)	B06902001.Mp2Test.git_clean_and_checkout:	git_stdout: b'HEAD is now at e5257e3 add example.cpp\n'
+[INFO]	(2018-12-18 15:25:08)	B06902001.Mp2Test.git_clean_and_checkout:	git_stdout: b'Removing MP2/loser_peer\n'
+[INFO]	(2018-12-18 15:25:08)	B06902001.Mp2Test.git_clean_and_checkout:	git_stderr: b'HEAD is now at e5257e3 add example.cpp\n'
+[INFO]	(2018-12-18 15:25:08)	B06902001.Mp2Test.git_clean_and_checkout:	make_stdout: b'g++ -Wextra -Wall -std=c++17 -O2 -o loser_peer loser_peer.cpp\n'
+[INFO]	(2018-12-18 15:25:12)	B06902001.Mp2Test.simple_rm_test.B06902001-resol_peer:	Config file /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmp5pgds9vf content
+[INFO]	(2018-12-18 15:25:12)	B06902001.Mp2Test.simple_rm_test.B06902001-resol_peer:	----------------
+[INFO]	(2018-12-18 15:25:12)	B06902001.Mp2Test.simple_rm_test.B06902001-resol_peer:	name = B06902001-resol
+[INFO]	(2018-12-18 15:25:12)	B06902001.Mp2Test.simple_rm_test.B06902001-resol_peer:	peers = B06902001-reep
+[INFO]	(2018-12-18 15:25:12)	B06902001.Mp2Test.simple_rm_test.B06902001-resol_peer:	repo = /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmp0uw6u4py
+[INFO]	(2018-12-18 15:25:12)	B06902001.Mp2Test.simple_rm_test.B06902001-resol_peer:	----------------
+[INFO]	(2018-12-18 15:25:12)	B06902001.Mp2Test.simple_rm_test.B06902001-reep_peer:	Config file /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmplt4oeih5 content
+[INFO]	(2018-12-18 15:25:12)	B06902001.Mp2Test.simple_rm_test.B06902001-reep_peer:	----------------
+[INFO]	(2018-12-18 15:25:12)	B06902001.Mp2Test.simple_rm_test.B06902001-reep_peer:	name = B06902001-reep
+[INFO]	(2018-12-18 15:25:12)	B06902001.Mp2Test.simple_rm_test.B06902001-reep_peer:	peers = B06902001-resol
+[INFO]	(2018-12-18 15:25:12)	B06902001.Mp2Test.simple_rm_test.B06902001-reep_peer:	repo = /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmpkr89b1ea
+[INFO]	(2018-12-18 15:25:12)	B06902001.Mp2Test.simple_rm_test.B06902001-reep_peer:	----------------
+[DEBUG]	(2018-12-18 15:25:12)	B06902001.Mp2Test.simple_rm_test.B06902001-resol_peer:	Start peer "B06902001-resol" process
+[DEBUG]	(2018-12-18 15:25:12)	B06902001.Mp2Test.simple_rm_test.B06902001-reep_peer:	Start peer "B06902001-reep" process
+[DEBUG]	(2018-12-18 15:25:13)	B06902001.Mp2Test.simple_rm_test.B06902001-resol_peer:	Kill peer "B06902001-resol" process
+[DEBUG]	(2018-12-18 15:25:13)	B06902001.Mp2Test.simple_rm_test.B06902001-reep_peer:	Kill peer "B06902001-reep" process
+[INFO]	(2018-12-18 15:25:13)	B06902001.Mp2Test.simple_rm_test:	Finish simple_rm_test test
+[INFO]	(2018-12-18 15:25:13)	B06902001.Mp2Test.simple_concurrency_test:	Start simple_concurrency_test test
+[INFO]	(2018-12-18 15:25:13)	B06902001.Mp2Test.git_clean_and_checkout:	git_stdout: b'HEAD is now at e5257e3 add example.cpp\n'
+[INFO]	(2018-12-18 15:25:13)	B06902001.Mp2Test.git_clean_and_checkout:	git_stdout: b'Removing MP2/loser_peer\n'
+[INFO]	(2018-12-18 15:25:13)	B06902001.Mp2Test.git_clean_and_checkout:	git_stderr: b'HEAD is now at e5257e3 add example.cpp\n'
+[INFO]	(2018-12-18 15:25:13)	B06902001.Mp2Test.git_clean_and_checkout:	make_stdout: b'g++ -Wextra -Wall -std=c++17 -O2 -o loser_peer loser_peer.cpp\n'
+[INFO]	(2018-12-18 15:25:16)	B06902001.Mp2Test.simple_concurrency_test.B06902001-resol_peer:	Config file /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmp88qjthcs content
+[INFO]	(2018-12-18 15:25:16)	B06902001.Mp2Test.simple_concurrency_test.B06902001-resol_peer:	----------------
+[INFO]	(2018-12-18 15:25:16)	B06902001.Mp2Test.simple_concurrency_test.B06902001-resol_peer:	name = B06902001-resol
+[INFO]	(2018-12-18 15:25:16)	B06902001.Mp2Test.simple_concurrency_test.B06902001-resol_peer:	peers = B06902001-reep
+[INFO]	(2018-12-18 15:25:16)	B06902001.Mp2Test.simple_concurrency_test.B06902001-resol_peer:	repo = /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmp8bw2gw81
+[INFO]	(2018-12-18 15:25:16)	B06902001.Mp2Test.simple_concurrency_test.B06902001-resol_peer:	----------------
+[INFO]	(2018-12-18 15:25:16)	B06902001.Mp2Test.simple_concurrency_test.B06902001-reep_peer:	Config file /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmpsqr221vs content
+[INFO]	(2018-12-18 15:25:16)	B06902001.Mp2Test.simple_concurrency_test.B06902001-reep_peer:	----------------
+[INFO]	(2018-12-18 15:25:16)	B06902001.Mp2Test.simple_concurrency_test.B06902001-reep_peer:	name = B06902001-reep
+[INFO]	(2018-12-18 15:25:16)	B06902001.Mp2Test.simple_concurrency_test.B06902001-reep_peer:	peers = B06902001-resol
+[INFO]	(2018-12-18 15:25:16)	B06902001.Mp2Test.simple_concurrency_test.B06902001-reep_peer:	repo = /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmp1ss9d783
+[INFO]	(2018-12-18 15:25:16)	B06902001.Mp2Test.simple_concurrency_test.B06902001-reep_peer:	----------------
+[DEBUG]	(2018-12-18 15:26:20)	B06902001.Mp2Test.simple_concurrency_test.B06902001-resol_peer:	Start peer "B06902001-resol" process
+[DEBUG]	(2018-12-18 15:26:20)	B06902001.Mp2Test.simple_concurrency_test.B06902001-reep_peer:	Start peer "B06902001-reep" process
+[DEBUG]	(2018-12-18 15:26:21)	B06902001.Mp2Test.simple_concurrency_test.B06902001-resol_peer:	Kill peer "B06902001-resol" process
+[DEBUG]	(2018-12-18 15:26:21)	B06902001.Mp2Test.simple_concurrency_test.B06902001-reep_peer:	Kill peer "B06902001-reep" process
+[INFO]	(2018-12-18 15:26:21)	B06902001.Mp2Test.simple_concurrency_test:	Finish simple_concurrency_test test
+[INFO]	(2018-12-18 15:26:21)	B06902001.Mp2Test.simple_restart_test:	Start simple_restart_test test
+[INFO]	(2018-12-18 15:26:21)	B06902001.Mp2Test.git_clean_and_checkout:	git_stdout: b'HEAD is now at e5257e3 add example.cpp\n'
+[INFO]	(2018-12-18 15:26:21)	B06902001.Mp2Test.git_clean_and_checkout:	git_stdout: b'Removing MP2/loser_peer\n'
+[INFO]	(2018-12-18 15:26:21)	B06902001.Mp2Test.git_clean_and_checkout:	git_stderr: b'HEAD is now at e5257e3 add example.cpp\n'
+[INFO]	(2018-12-18 15:26:21)	B06902001.Mp2Test.git_clean_and_checkout:	make_stdout: b'g++ -Wextra -Wall -std=c++17 -O2 -o loser_peer loser_peer.cpp\n'
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-resol_peer:	Config file /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmpiji01afh content
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-resol_peer:	----------------
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-resol_peer:	name = B06902001-resol
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-resol_peer:	peers = B06902001-reep B06902001-sf
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-resol_peer:	repo = /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmpwkan82xr
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-resol_peer:	----------------
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-reep_peer:	Config file /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmp3rme44ed content
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-reep_peer:	----------------
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-reep_peer:	name = B06902001-reep
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-reep_peer:	peers = B06902001-resol B06902001-sf
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-reep_peer:	repo = /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmph2qy8n4w
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-reep_peer:	----------------
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-sf_peer:	Config file /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmpyqqxiv2y content
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-sf_peer:	----------------
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-sf_peer:	name = B06902001-sf
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-sf_peer:	peers = B06902001-resol B06902001-reep
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-sf_peer:	repo = /tmp2/r06922148/TA2018/assignment/mp2/mp2-judge/judge_tmp/tmppbe_voj0
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-sf_peer:	----------------
+[DEBUG]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-resol_peer:	Start peer "B06902001-resol" process
+[DEBUG]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-reep_peer:	Start peer "B06902001-reep" process
+[DEBUG]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-sf_peer:	Start peer "B06902001-sf" process
+[DEBUG]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-resol_peer:	Kill peer "B06902001-resol" process
+[DEBUG]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-reep_peer:	Kill peer "B06902001-reep" process
+[DEBUG]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test.B06902001-sf_peer:	Kill peer "B06902001-sf" process
+[INFO]	(2018-12-18 15:26:24)	B06902001.Mp2Test.simple_restart_test:	Finish simple_restart_test test
+[INFO]	(2018-12-18 15:26:24)	B06902001:	status=ok
+[INFO]	(2018-12-18 15:26:24)	B06902001:	comment={'simple_history_list_test': 'Test failed', 'simple_local_repo_test': 'Test failed', 'simple_remote_transfer_test': 'Test failed', 'simple_log_update_test': 'Test failed', 'simple_rm_test': 'Test failed', 'simple_concurrency_test': 'Test failed', 'simple_restart_test': 'Test failed'}
+[INFO]	(2018-12-18 15:26:24)	B06902001:	error={'simple_history_list_test': 'Expect socket file /tmp/mp2-B06902001-resol.sock but not found', 'simple_local_repo_test': 'Expect socket file /tmp/mp2-B06902001-resol.sock but not found', 'simple_remote_transfer_test': 'Expect socket file /tmp/mp2-B06902001-resol.sock but not found', 'simple_log_update_test': 'Expect socket file /tmp/mp2-B06902001-resol.sock but not found', 'simple_rm_test': 'Expect socket file /tmp/mp2-B06902001-resol.sock but not found', 'simple_concurrency_test': 'Expect socket file /tmp/mp2-B06902001-resol.sock but not found', 'simple_restart_test': 'Expect socket file /tmp/mp2-B06902001-resol.sock but not found'}
+[INFO]	(2018-12-18 15:26:24)	B06902001:	score=0.0
