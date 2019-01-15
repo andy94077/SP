@@ -21,6 +21,9 @@ MP2/socket_ex
 MP2/*.config
 MP2/*.socket
 MP2/tt
+MP3/a/
+csie_box_server
+csie_box_client
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
