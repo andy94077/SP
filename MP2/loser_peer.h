@@ -23,8 +23,8 @@ public:
 		}
 		file.ignore(numeric_limits<streamsize>::max(),'=');
 		file.ignore(1,' ');
-		file >> user_socket;
-		user_socket += ".socket";
+		file >> user_name;
+		user_socket = user_name + ".socket";
 
 		file.ignore(numeric_limits<streamsize>::max(), '=');
 		string str;
@@ -46,7 +46,7 @@ public:
 			_fail = true;
 	}
 	bool fail() { return _fail || user_socket=="" || peer_n<=0 || repo==""; }
-	string user_socket;
+	string user_name, user_socket;
     string peer_socket[4];
     string repo;
 	int peer_n;
