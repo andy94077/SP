@@ -35,7 +35,7 @@ inline void load_files(const char dir[], vector<FileMd5>& file)
 // inline uint32_t load_files(FILE *f, vector<FileMd5>& file)
 // {
 // 	deque<uint32_t> commit_pos;
-// 	get_last_n_commit_pos(f, commit_pos);
+// 	get_commit_pos(f, commit_pos);
 	
 // 	/*
 // 	*	jump to md5 part
@@ -86,7 +86,7 @@ void status(const Config& config)
 {
 	vector<FileMd5> cur_file; load_files(config.repo.c_str(),cur_file);
 
-	FILE *los = fopen((".loser_record_"+config.user_name).c_str(), "rb");
+	FILE *los = fopen(("/tmp/.loser_record_"+config.user_name).c_str(), "rb");
 	//.loser_record does not exist, treat all files as new files
 	if (los == NULL)
 	{
@@ -230,7 +230,7 @@ void log(int n, const char dir[])
 {
 	FILE *f = fopen(((string)dir+".loser_record").data(), "rb");
 	deque<uint32_t> commit_log;
-	get_last_n_commit_pos(f, commit_log, n);
+	get_commit_pos(f, commit_log, n);
 	uint32_t commit_n = commit_log.size();
 
 	for (auto it = commit_log.cbegin(); it != commit_log.cend();it++)
@@ -317,10 +317,10 @@ int main(int argc, char const *argv[])
 	read_str(f, name, f1);
 	printf("%x %x %x %x %x %x %hhu %s\n", fn, a, m, c, d, cz, f1, name);*/
 
-	/*//get_last_n_commit_pos
+	/*//get_commit_pos
 	FILE *f = fopen("test_1/.loser_record", "rb");
 	deque<uint32_t> c;
-	get_last_n_commit_pos(f, c);
+	get_commit_pos(f, c);
 	fclose(f);*/
 
 	/*//load_files(char*, vector<FileMd5>)
