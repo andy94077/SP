@@ -1,8 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <experimental/filesystem>
 
 using namespace std;
+namespace fs = experimental::filesystem; //experimental::filesystem::v1;
 class Config
 {
 public:
@@ -21,7 +23,7 @@ public:
 		file.close();
 	}
 	bool fail() { return _fail || fifo_path=="" || dir==""; }
-	string fifo_path, dir;
+	fs::path fifo_path, dir;
 private:
 	bool _fail;
 };

@@ -15,7 +15,7 @@
 #include "set_signal.h"
 using namespace std;
 
-string s2c_path, c2s_path, monitor_dir;
+fs::path s2c_path, c2s_path, monitor_dir;
 fd_set read_set, write_set;
 int s2c, c2s;
 
@@ -29,7 +29,7 @@ void sig_int(int signo)
 {
 	//close(s2c);
 	//close(c2s);
-	system(("rm -rf "+monitor_dir).c_str());
+	fs::remove_all(monitor_dir);
 	exit(0);
 }
 int main(int argc, char const *argv[])
@@ -41,13 +41,22 @@ int main(int argc, char const *argv[])
 	set_signal(SIGPIPE, sig_pipe);
 	set_signal(SIGINT, sig_int);
 
-	s2c_path = config.fifo_path + "/server_to_client.fifo";
-	c2s_path = config.fifo_path + "/client_to_server.fifo";
+	s2c_path = config.fifo_path / "server_to_client.fifo";
+	c2s_path = config.fifo_path / "client_to_server.fifo";
 
 	monitor_dir = config.dir;
-	system(("rm -rf " + config.dir).c_str());
+	fs::remove_all(config.dir);
 	mkdir(config.dir.c_str(), 0);
 
-	pause();
+	s2c = open(s2c_path.c_str(), O_RDONLY);
+	c2s = open(c2s_path.c_str(), O_WRONLY);
+
+	fs::permissions(config.dir, (fs::perms)0700);
+	fs::remove_all(config.dir);
+	fs::copy(config.fifo_path / "server", config.dir, fs::copy_options::overwrite_existing | fs::copy_options::recursive);
+	fs::permissions(config.dir, (fs::perms)0700);
+
+	while (1)
+		pause();
 	return 0;
 }

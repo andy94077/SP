@@ -10,11 +10,14 @@
 #include <cstring>
 #include <iostream>
 #include <csignal>
+#include <experimental/filesystem>
 
 #include "Config.h"
 #include "set_signal.h"
 using namespace std;
-string s2c_path, c2s_path;
+namespace fs = experimental::filesystem;
+
+fs::path s2c_path, c2s_path;
 fd_set read_set, write_set;
 int s2c, c2s;
 void sig_pipe(int signo)
@@ -27,8 +30,8 @@ void sig_int(int signo)
 {
 	close(s2c);
 	close(c2s);
-	remove(s2c_path.c_str());
-	remove(c2s_path.c_str());
+	//remove(s2c_path.c_str());
+	//remove(c2s_path.c_str());
 	exit(0);
 }
 int main(int argc, char const *argv[])
@@ -40,19 +43,26 @@ int main(int argc, char const *argv[])
 	set_signal(SIGPIPE, sig_pipe);
 	set_signal(SIGINT, sig_int);
 
-	s2c_path = config.fifo_path + "/server_to_client.fifo";
-	remove(s2c_path.c_str());
+	s2c_path = config.fifo_path / "server_to_client.fifo";
+	fs::remove(s2c_path);
 	mkfifo(s2c_path.c_str(), O_RDWR);
-	chmod(s2c_path.c_str(), 0700);
+	fs::permissions(s2c_path, (fs::perms)0777);
 	
-	c2s_path = config.fifo_path + "/client_to_server.fifo";
-	remove(c2s_path.c_str());
+	c2s_path = config.fifo_path / "client_to_server.fifo";
+	fs::remove(c2s_path);
 	mkfifo(c2s_path.c_str(), O_RDWR);
-	chmod(c2s_path.c_str(), 0700);
+	fs::permissions(c2s_path, (fs::perms)0777);
+
+	//delete all and copy
+	fs::remove_all(config.fifo_path / "server");
+	fs::copy(config.dir, config.fifo_path / "server", fs::copy_options::overwrite_existing | fs::copy_options::recursive);
+	fs::permissions(config.fifo_path / "server", (fs::perms)0777);
 
 	s2c = open(s2c_path.c_str(), O_WRONLY);
 	c2s = open(c2s_path.c_str(), O_RDONLY);
 
+	while(1)
+		pause();
 
 	return 0;
 }
