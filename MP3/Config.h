@@ -8,20 +8,29 @@ namespace fs = std::filesystem; //experimental::filesystem::v1;
 class Config
 {
 public:
-    Config(const char path[]):_fail(false)
+    Config():_fail(false){};
+	Config(const char path[]):_fail(false)
     {
+		read(path);
+	}
+
+	bool read(const char path[])
+	{
     	ifstream file(path);
 		if(file.fail())
 		{
 			_fail = true;
-			return;
+			return false;
 		}
-		
-		file >> fifo_path>>fifo_path>>fifo_path;
-		file >> dir >> dir >> dir;
+
+		string trash;
+		file >> trash >> trash >> fifo_path;
+		file >> trash >> trash >> dir;
 		
 		file.close();
+		return true;
 	}
+
 	bool fail() { return _fail || fifo_path=="" || dir==""; }
 	fs::path fifo_path, dir;
 private:
