@@ -1,10 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <experimental/filesystem>
+#include <filesystem>
 
 using namespace std;
-namespace fs = experimental::filesystem; //experimental::filesystem::v1;
+namespace fs = std::filesystem; //experimental::filesystem::v1;
 class Config
 {
 public:
