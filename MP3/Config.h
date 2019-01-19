@@ -4,7 +4,7 @@
 #include <filesystem>
 
 using namespace std;
-namespace fs = std::filesystem; //experimental::filesystem::v1;
+namespace fs = std::filesystem; 
 class Config
 {
 public:
