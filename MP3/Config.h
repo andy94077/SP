@@ -1,10 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <filesystem>
 
+#include "filesystem_utilities.h"
 using namespace std;
-namespace fs = std::filesystem; 
+
 class Config
 {
 public:
