@@ -22,6 +22,10 @@ MP2/*.config
 MP2/*.socket
 MP2/tt
 MP3/a/
+MP3/u/
+MP3/clog*
+MP3/slog*
+MP3/test_fs
 csie_box_server
 csie_box_client
 
