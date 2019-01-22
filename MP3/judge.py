@@ -70,8 +70,8 @@ if not os.path.exists(server_path) or not os.path.exists(client_path):
 grade = 0
 # Judge 1
 print('Judge #1')
-slog=open('slog','a')
-server = Popen([server_path, server_config], stdout=slog, stderr=slog)
+slog=open('slog','w')
+server = Popen([server_path, server_config], stdout=slog)
 time.sleep(1)
 if not os.path.exists(os.path.join(fifo_dir, 'server_to_client.fifo')) or \
    not os.path.exists(os.path.join(fifo_dir, 'client_to_server.fifo')):
@@ -88,8 +88,8 @@ if server.poll() == None:
 
 # Judge 2
 print('Judge #2')
-clog=open('clog','a')
-client = Popen([client_path, client_config], stdout=clog, stderr=clog)
+clog=open('clog','w')
+client = Popen([client_path, client_config], stdout=clog)
 time.sleep(1)
 mode = oct(os.stat(client_dir).st_mode)[-3:]
 if mode == '000':
@@ -116,7 +116,7 @@ addFile(os.path.join(server_dir, 'A', 'B', 'C', 'c.txt'), randomString(10))
 addFile(os.path.join(server_dir, 'A', 'D', 'd.txt'), randomString(10))
 addFile(os.path.join(server_dir, 'A', 'D', 'E', 'e.txt'), randomString(10))
 
-server = Popen([server_path, server_config], stdout=slog, stderr=slog)
+server = Popen([server_path, server_config], stdout=slog)
 time.sleep(3)
 if call(['diff', '-r', server_dir, client_dir], stdout = DEVNULL):
     print ('Dir does not sync.')
@@ -170,7 +170,7 @@ else:
 
 # Judge 6
 print ('Judge #6')
-server = Popen([server_path, server_config], stdout=slog, stderr=slog)
+server = Popen([server_path, server_config], stdout=slog)
 time.sleep(1)
 error = False
 try:
@@ -208,7 +208,7 @@ if not error:
 
 # Judge 8
 print ('Judge #8')
-client = Popen([client_path, client_config], stdout=clog, stderr=clog)
+client = Popen([client_path, client_config], stdout=clog)
 time.sleep(1)
 if call(['diff', '-r', '--no-dereference', server_dir, client_dir], stdout = DEVNULL):
     print ('Dir does not sync.')
@@ -220,7 +220,7 @@ else:
 print ('Judge #9')
 client.send_signal(2)
 print("int to client")
-time.sleep(10)
+time.sleep(1)
 server.send_signal(2)
 print('int to server')
 time.sleep(1)
