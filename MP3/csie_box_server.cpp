@@ -26,7 +26,7 @@ fs::path s2c_fifo, c2s_fifo;
 int s2c, c2s,c;
 void sig_pipe(int signo)
 {
-	cerr << "##ser get SIGPIPE"<<endl;
+	cout << "##ser get SIGPIPE"<<endl;
 	//close all files except stdin, stdout, stderr
 	for (int i = 3; i < sysconf(_SC_OPEN_MAX);i++)
 		close(i);
@@ -34,7 +34,7 @@ void sig_pipe(int signo)
 }
 void sig_int(int signo)
 {
-	cerr << "##ser interrupted"<<endl;
+	cout << "##ser interrupted"<<endl;
 	close(s2c);
 	close(c2s);
 	fs::remove(s2c_fifo);
@@ -184,7 +184,7 @@ void run()
 
 		if(FD_ISSET(c2s,&work_set))
 		{
-			cerr << "ser get msg "<<c++<<'\n';
+			cout << "ser get msg "<<c++<<'\n';
 			Message msg;
 			//try
 			//{
@@ -227,7 +227,7 @@ int main(int argc, char const *argv[])
 	sigsetjmp(jump_buffer,1);
 	sigset_t old;
 	sigprocmask(0, NULL, &old);
-	cerr << "sigset " << sigismember(&old, SIGPIPE) << '\n';
+	cout << "sigset " << sigismember(&old, SIGPIPE) << '\n';
 	run();
 	return 0;
 }
